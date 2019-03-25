@@ -21,10 +21,24 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/product_name_edit_text"
-        android:layout_marginVertical="8dp"
-        android:layout_marginHorizontal="12dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginLeft="12dp"
         android:hint="Tuotteen nimi"
         app:layout_constraintTop_toBottomOf="@id/add_image_button"
+        />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/address_edit_text"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginLeft="12dp"
+        android:hint="Osoite"
+        app:layout_constraintTop_toBottomOf="@id/product_name_edit_text"
         />
 
     <RadioGroup
@@ -37,7 +51,7 @@
         android:layout_marginRight="12dp"
         android:gravity="center_horizontal"
         android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/product_name_edit_text"
+        app:layout_constraintTop_toBottomOf="@id/address_edit_text"
         >
 
         
@@ -49,8 +63,10 @@
             android:background="@drawable/radio_flat_selector"
             android:button="@android:color/transparent"
             android:checked="true"
-            android:paddingHorizontal="16dp"
-            android:paddingVertical="3dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:paddingRight="3dp"
+            android:paddingLeft="3dp"
             android:text="Lahjoita"
             />
         <RadioButton
@@ -60,8 +76,10 @@
             android:gravity="center"
             android:background="@drawable/radio_flat_selector"
             android:button="@android:color/transparent"
-            android:paddingVertical="3dp"
-            android:paddingHorizontal="16dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"
+            android:paddingRight="16dp"
+            android:paddingLeft="16dp"
             android:text="Myy"
 
             />
