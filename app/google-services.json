@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "293905662480",
+    "firebase_url": "https://palsta-b6497.firebaseio.com",
+    "project_id": "palsta-b6497",
+    "storage_bucket": "palsta-b6497.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:293905662480:android:b9e6f898a26e1c0d",
+        "android_client_info": {
+          "package_name": "com.example.palsta"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "293905662480-dtq1apbmlnsi85ruth1kauls0vdqc0bq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_UJrPHNfDPoUAiSnRJfCowhBKXEEh6xY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
