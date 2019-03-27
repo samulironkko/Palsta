@@ -68,6 +68,10 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, NewAdActivity.class);
             startActivity(intent);
             return true;
+        }else if(item.getItemId() == R.id.yourAds){
+            Intent intent = new Intent(this, YourAds.class);
+            startActivity(intent);
+            return true;
         }
         return true;
     }
