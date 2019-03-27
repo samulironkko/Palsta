@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        //inflater.inflate(R.menu.menu, menu);
+        inflater.inflate(R.menu.menu, menu);
         return true;
     }
 
@@ -66,6 +66,10 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.newAd){
             Intent intent = new Intent(this, NewAdActivity.class);
+            startActivity(intent);
+            return true;
+        }else if(item.getItemId() == R.id.yourAds){
+            Intent intent = new Intent(this, YourAds.class);
             startActivity(intent);
             return true;
         }
