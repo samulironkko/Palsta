@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Palsta</string>
+    <string name="mapbox_access_token">pk.eyJ1Ijoic2FtdWxpcm9ua2tvIiwiYSI6ImNqdHF4Z2ViczBpZmI0ZGxsdDF1eHczZzgifQ.wBTnY_6-AdYQKk7dYqFDlQ
+</string>
 </resources>
