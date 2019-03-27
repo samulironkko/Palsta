@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-
+/*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return true;
     }
-
+*/
     @Override
     protected void onResume() {
         super.onResume();
