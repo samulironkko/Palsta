@@ -1,8 +1,11 @@
 package com.example.palsta;
 
 import android.content.Context;
+import android.nfc.Tag;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
+import android.util.LogPrinter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +21,8 @@ public class AdAdapter extends ArrayAdapter<AdPart> {
     public AdAdapter(Context context, ArrayList<AdPart> Adverts){
         super(context, 0, Adverts);
     }
+
+
 
     @Override
     public int getViewTypeCount() {
