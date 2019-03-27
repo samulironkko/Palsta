@@ -1,17 +1,28 @@
 package com.example.palsta;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
@@ -34,7 +45,36 @@ public class MainActivity extends AppCompatActivity {
         }
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db = FirebaseFirestore.getInstance();
 
+        DocumentReference user = db.collection("ad").document("bK6GeO4jwrNKFexlyHR0");
+        user.get().addOnCompleteListener(new OnCompleteListener < DocumentSnapshot > () {
+            @Override
+            public void onComplete(@NonNull Task <DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot doc = task.getResult();
+                    StringBuilder fields = new StringBuilder("");
+
+
+                    fields.append(doc.get("product"));
+                    fields.append(doc.get("price")).append("€/").append(doc.get("pricedescription"));
+                    fields.append("\nPhone: ").append(doc.get("Phone"));
+
+                    TextView productName = findViewById(R.id.productNameText);
+                    //sijainti
+                    TextView price = findViewById(R.id.priceText);
+
+
+                    productName.setText(fields.toString());
+                    price.setText(fields.toString());
+                }
+            }
+        })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                    }
+                });
 
 
 /*

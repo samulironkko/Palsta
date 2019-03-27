@@ -21,8 +21,7 @@ public class AdAdapter extends ArrayAdapter<AdPart> {
     public AdAdapter(Context context, ArrayList<AdPart> Adverts){
         super(context, 0, Adverts);
     }
-
-
+    
 
     @Override
     public int getViewTypeCount() {
