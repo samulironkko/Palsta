@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -56,17 +57,32 @@ public class MainActivity extends AppCompatActivity {
                     StringBuilder fields = new StringBuilder("");
 
 
+                    String product = doc.get("product").toString();
+                    String address = doc.get("address").toString();
+                    int price = doc.getLong("price").intValue();;
+                    String pricedescription = doc.get("pricedescription").toString();
+                    String description = doc.get("description").toString();
+
+                    Log.d("asdf", product);
+                    Log.d("asdf", address);
+                    Log.d("asdf", String.valueOf(price));
+                    Log.d("asdf", pricedescription);
+                    Log.d("asdf", description);
+
+
+
+
+
                     fields.append(doc.get("product"));
                     fields.append(doc.get("price")).append("€/").append(doc.get("pricedescription"));
-                    fields.append("\nPhone: ").append(doc.get("Phone"));
 
                     TextView productName = findViewById(R.id.productNameText);
                     //sijainti
-                    TextView price = findViewById(R.id.priceText);
+                    //TextView price = findViewById(R.id.priceText);
 
 
                     productName.setText(fields.toString());
-                    price.setText(fields.toString());
+                    //price.setText(fields.toString());
                 }
             }
         })
