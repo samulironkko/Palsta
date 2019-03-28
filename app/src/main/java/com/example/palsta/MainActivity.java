@@ -26,6 +26,8 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -39,51 +41,70 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         listView = findViewById(R.id.adList);
-        for (int i = 0 ; i < 10 ; i++) {
-            AdPart part = new AdPart();
-            AdParts.add(part);
-        }
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        DocumentReference user = db.collection("ad").document("bK6GeO4jwrNKFexlyHR0");
-        user.get().addOnCompleteListener(new OnCompleteListener < DocumentSnapshot > () {
+        final CollectionReference ad = db.collection("ad");
+        //ad.get().addOnCompleteListener(new OnCompleteListener < DocumentSnapshot > () {
+        db.collection("ad")
+        .get()
+        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onComplete(@NonNull Task <DocumentSnapshot> task) {
+            public void onComplete(@NonNull Task <QuerySnapshot> task) {
                 if (task.isSuccessful()) {
-                    DocumentSnapshot doc = task.getResult();
-                    StringBuilder fields = new StringBuilder("");
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        AdPart part = new AdPart();
+                        AdParts.add(part);
+                        Log.d("asdf", document.getId() + " => " + document.getData());
+                    }
+                    QuerySnapshot doc = task.getResult();
+                    //StringBuilder fields = new StringBuilder("");
+
+                    Map<String, Object> data1 = new HashMap<>();
+                    data1.put("product", "Chili");
+                    data1.put("address", "Jousimiehentie 2");
+                    data1.put("price", 2);
+                    data1.put("pricedesctiption", "kg");
+                    data1.put("description", "kasvihuoneessa kasvatettuja kurkkuja");
+                    ad.document("Ilmoitus4").set(data1);
 
 
+                    TextView productName = findViewById(R.id.productNameText);
+                    TextView addressField = findViewById(R.id.locationText);
+/*
                     String product = doc.get("product").toString();
                     String address = doc.get("address").toString();
                     int price = doc.getLong("price").intValue();;
                     String pricedescription = doc.get("pricedescription").toString();
                     String description = doc.get("description").toString();
+                    String location = doc.get("location").toString();
 
+                    productName.append(product);
+                    addressField.append(address);
+/*
                     Log.d("asdf", product);
                     Log.d("asdf", address);
                     Log.d("asdf", String.valueOf(price));
                     Log.d("asdf", pricedescription);
                     Log.d("asdf", description);
+                    Log.d("asdf", location);
+*/
+                    //fields.append(product + "\n");
+                    //fields.append(price).append("€/").append(pricedescription + "\n");
+                    //fields.append(address);
 
-
-
-
-
-                    fields.append(doc.get("product"));
-                    fields.append(doc.get("price")).append("€/").append(doc.get("pricedescription"));
-
-                    TextView productName = findViewById(R.id.productNameText);
                     //sijainti
                     //TextView price = findViewById(R.id.priceText);
 
-
-                    productName.setText(fields.toString());
+                    //productName.setText(fields.toString());
                     //price.setText(fields.toString());
+                    AdAdapter adapter = new AdAdapter(MainActivity.this, AdParts);
+                    listView.setAdapter(adapter);
                 }
+
             }
         })
                 .addOnFailureListener(new OnFailureListener() {
@@ -136,7 +157,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        AdAdapter adapter = new AdAdapter(this, AdParts);
-        listView.setAdapter(adapter);
+
     }
 }
