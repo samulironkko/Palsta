@@ -1,10 +1,16 @@
 package com.example.palsta;
 
+import android.app.ActionBar;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 import com.mapbox.api.geocoding.v5.models.CarmenFeature;
 import com.mapbox.mapboxsdk.Mapbox;
@@ -16,7 +22,10 @@ import com.mapbox.mapboxsdk.plugins.places.picker.model.PlacePickerOptions;
 public class NewAdActivity extends AppCompatActivity {
 
     private static final int PLACE_SELECTION_REQUEST_CODE = 56789;
+    private static final int RESULT_LOAD_IMAGE = 9999;
     Button mapButton;
+    Button addressButton;
+    ImageButton addImageButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +35,8 @@ public class NewAdActivity extends AppCompatActivity {
         Mapbox.getInstance(this, "pk.eyJ1Ijoic2FtdWxpcm9ua2tvIiwiYSI6ImNqdHF4Z2ViczBpZmI0ZGxsdDF1eHczZzgifQ.wBTnY_6-AdYQKk7dYqFDlQ");
 
         mapButton = findViewById(R.id.address_button);
+        addressButton = findViewById(R.id.address_button);
+        addImageButton = findViewById(R.id.add_image_button);
 
         mapButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -34,6 +45,13 @@ public class NewAdActivity extends AppCompatActivity {
                 goToPickerActivity();
                 // Intent intent = new Intent(NewAdActivity.this, MapActivity.class);
                // startActivity(intent);
+            }
+        });
+        addImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(galleryIntent, RESULT_LOAD_IMAGE);
             }
         });
     }
@@ -60,7 +78,24 @@ public class NewAdActivity extends AppCompatActivity {
             // Retrieve the information from the selected location's CarmenFeature
 
             CarmenFeature carmenFeature = PlacePicker.getPlace(data);
+
+            addressButton.setText(carmenFeature.placeName());
+        }else if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && data != null) {
+            Uri SelectedImage = data.getData();
+            String[] FilePathColumn = {MediaStore.Images.Media.DATA};
+
+            Cursor SelectedCursor = getContentResolver().query(SelectedImage, FilePathColumn, null, null, null);
+            SelectedCursor.moveToFirst();
+
+            int columnIndex = SelectedCursor.getColumnIndex(FilePathColumn[0]);
+            String picturePath = SelectedCursor.getString(columnIndex);
+            SelectedCursor.close();
+
+            addImageButton.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+
+
         }
+
     }
 
 
