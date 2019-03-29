@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".NewAdActivity">
-    <ScrollView
+
+
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.constraint.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
     <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_width="0dp"
+        android:layout_height="300dp"
         android:id="@+id/add_image_button"
         android:src="@drawable/baseline_photo_camera_black_48dp"
+        android:background="@android:color/transparent"
         android:layout_marginLeft="12dp"
         android:layout_marginRight="12dp"
         android:layout_marginTop="12dp"
-        android:scaleType="fitCenter"
+        android:scaleType="centerInside"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintDimensionRatio="4:3"
+        app:layout_constraintDimensionRatio="1:1"
+
         />
 
     <EditText
@@ -40,19 +40,37 @@
         app:layout_constraintTop_toBottomOf="@id/add_image_button"
         />
 
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/address_textview"
+            app:layout_constraintHorizontal_weight="0.5"
+            app:layout_constraintTop_toBottomOf="@id/product_name_edit_text"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/address_button"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginRight="12dp"
+            android:layout_marginLeft="12dp"
+            android:textSize="20dp"
+            android:hint="Osoite:"
+            android:minHeight="80dp"
+            />
+
     <Button
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:id="@+id/address_button"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:layout_marginRight="12dp"
         android:layout_marginLeft="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/address_textview"
         android:background="@android:color/transparent"
-        android:text="Osoite"
-        android:textSize="20dp"
-
+        android:drawableStart="@drawable/baseline_person_pin_circle_black_24dp"
         app:layout_constraintTop_toBottomOf="@id/product_name_edit_text"
+        app:layout_constraintHorizontal_weight="0.1"
         />
 
     <RadioGroup
@@ -65,7 +83,7 @@
         android:layout_marginRight="12dp"
         android:gravity="center_horizontal"
         android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/address_button"
+        app:layout_constraintTop_toBottomOf="@id/address_textview"
         >
 
 
@@ -107,27 +125,32 @@
         android:layout_height="wrap_content"
         android:id="@+id/price_edit_text"
         app:layout_constraintTop_toBottomOf="@id/sell_give_group"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="12dp"
         android:layout_marginRight="12dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/unit_spinner"
         app:layout_constraintHorizontal_weight="0.5"
+        android:hint="Hinta"
+        android:textSize="30dp"
+        android:textAlignment="center"
+        android:drawableRight="@drawable/baseline_euro_symbol_black_18dp"
         />
 
     <Spinner
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:id="@+id/unit_spinner"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="12dp"
         android:layout_marginRight="12dp"
-        app:layout_constraintHorizontal_weight="0.5"
+        app:layout_constraintHorizontal_weight="0.2"
         app:layout_constraintStart_toEndOf="@id/price_edit_text"
         app:layout_constraintTop_toBottomOf="@id/sell_give_group"
         app:layout_constraintEnd_toEndOf="parent"
+
         />
 
     <EditText
@@ -138,6 +161,7 @@
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="12dp"
         android:layout_marginRight="12dp"
+
         app:layout_constraintTop_toBottomOf="@id/price_edit_text"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintStart_toEndOf="parent"
@@ -153,9 +177,7 @@
     android:layout_marginTop="8dp"
     android:layout_marginRight="12dp"/>
 
-        </android.support.constraint.ConstraintLayout>
-
-    </ScrollView>
+    </android.support.constraint.ConstraintLayout>
 
 
-</android.support.constraint.ConstraintLayout>
+</ScrollView>

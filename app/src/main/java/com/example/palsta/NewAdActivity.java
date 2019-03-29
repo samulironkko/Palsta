@@ -9,8 +9,11 @@ import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.mapbox.api.geocoding.v5.models.CarmenFeature;
 import com.mapbox.mapboxsdk.Mapbox;
@@ -19,13 +22,17 @@ import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.plugins.places.picker.PlacePicker;
 import com.mapbox.mapboxsdk.plugins.places.picker.model.PlacePickerOptions;
 
+import java.util.ArrayList;
+
 public class NewAdActivity extends AppCompatActivity {
 
     private static final int PLACE_SELECTION_REQUEST_CODE = 56789;
     private static final int RESULT_LOAD_IMAGE = 9999;
     Button mapButton;
     Button addressButton;
+    TextView addressTextView;
     ImageButton addImageButton;
+    Spinner unitSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +44,13 @@ public class NewAdActivity extends AppCompatActivity {
         mapButton = findViewById(R.id.address_button);
         addressButton = findViewById(R.id.address_button);
         addImageButton = findViewById(R.id.add_image_button);
+        addressTextView = findViewById(R.id.address_textview);
+        unitSpinner = findViewById(R.id.unit_spinner);
+
+        ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(this,
+                R.array.units_array, R.layout.spinner_item);
+        spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        unitSpinner.setAdapter(spinnerAdapter);
 
         mapButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,7 +93,7 @@ public class NewAdActivity extends AppCompatActivity {
 
             CarmenFeature carmenFeature = PlacePicker.getPlace(data);
 
-            addressButton.setText(carmenFeature.placeName());
+            addressTextView.setText(carmenFeature.placeName());
         }else if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && data != null) {
             Uri SelectedImage = data.getData();
             String[] FilePathColumn = {MediaStore.Images.Media.DATA};
