@@ -56,7 +56,14 @@ public class MainActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task <QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
-                        AdPart part = new AdPart();
+                        String address = document.get("address").toString();
+                        String description = document.get("description").toString();
+                        int price = document.getLong("price").intValue();
+                        String pricedescription = document.get("pricedescription").toString();
+                        String product = document.get("product").toString();
+                        //String location = document.get("location").toString();
+
+                        AdPart part = new AdPart(product, address, price, pricedescription, description);
                         AdParts.add(part);
                         Log.d("asdf", document.getId() + " => " + document.getData());
                     }
@@ -67,21 +74,16 @@ public class MainActivity extends AppCompatActivity {
                     data1.put("product", "Chili");
                     data1.put("address", "Jousimiehentie 2");
                     data1.put("price", 2);
-                    data1.put("pricedesctiption", "kg");
+                    data1.put("pricedescription", "kg");
                     data1.put("description", "kasvihuoneessa kasvatettuja kurkkuja");
-                    ad.document("Ilmoitus4").set(data1);
+                    ad.document("Ilmoitus3").set(data1);
 
 
-                    TextView productName = findViewById(R.id.productNameText);
-                    TextView addressField = findViewById(R.id.locationText);
+                   // TextView productName = findViewById(R.id.productNameText);
+                   // TextView addressField = findViewById(R.id.locationText);
+
+
 /*
-                    String product = doc.get("product").toString();
-                    String address = doc.get("address").toString();
-                    int price = doc.getLong("price").intValue();;
-                    String pricedescription = doc.get("pricedescription").toString();
-                    String description = doc.get("description").toString();
-                    String location = doc.get("location").toString();
-
                     productName.append(product);
                     addressField.append(address);
 /*
