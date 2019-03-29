@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -46,6 +47,8 @@ public class AdAdapter extends ArrayAdapter<AdPart> {
             int layoutId = R.layout.ad_list_item;
             convertView = LayoutInflater.from(getContext()).inflate(layoutId, parent, false);
         }
+        TextView name =convertView.findViewById(R.id.productNameText);
+        name.setText(base.getProduct());
         return convertView;
     }
 

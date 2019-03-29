@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -16,12 +17,8 @@ import android.widget.TextView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -36,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<AdPart> AdParts = new ArrayList<>();
 
     ListView listView = null;
+
+    public static final String EXTRA_MESSAGE ="com.example.palsta.MESSAGE";
 
 
     @Override
@@ -121,6 +120,19 @@ public class MainActivity extends AppCompatActivity {
                     //price.setText(fields.toString());
                     AdAdapter adapter = new AdAdapter(MainActivity.this, AdParts);
                     listView.setAdapter(adapter);
+                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                        @Override
+                        public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+                                                long arg3) {
+
+                            //Log.d("asdf","Items " +  AdParts.get(arg2).getStr() );
+                            Intent intent = new Intent(getBaseContext(), SingleAd.class);
+                            intent.putExtra(EXTRA_MESSAGE, AdParts.get(arg2));
+                            startActivity(intent);
+                        }
+
+                    });
                 }
 
             }
