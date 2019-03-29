@@ -1,5 +1,6 @@
 package com.example.palsta;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -19,9 +20,5 @@ public class AdPart {
         price = price1;
         pricedescription = pricedescription1;
         description = description1;
-
-
-
-
     }
 }

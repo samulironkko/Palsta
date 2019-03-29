@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.example.palsta.R.id.productNameText;
+
 public class MainActivity extends AppCompatActivity {
 
     ArrayList<AdPart> AdParts = new ArrayList<>();
@@ -62,25 +64,39 @@ public class MainActivity extends AppCompatActivity {
                         String pricedescription = document.get("pricedescription").toString();
                         String product = document.get("product").toString();
                         //String location = document.get("location").toString();
+                        Log.d("asdf", product);
+                        Log.d("asdf", address);
+                        Log.d("asdf", String.valueOf(price));
+                        Log.d("asdf", pricedescription);
+                        Log.d("asdf", description);
 
                         AdPart part = new AdPart(product, address, price, pricedescription, description);
                         AdParts.add(part);
+
+                        //TextView productTextView = findViewById(productNameText);
+                        //productTextView.setText(product);
+
                         Log.d("asdf", document.getId() + " => " + document.getData());
+
                     }
                     QuerySnapshot doc = task.getResult();
                     //StringBuilder fields = new StringBuilder("");
 
+                    /*
+                    add new table
+
                     Map<String, Object> data1 = new HashMap<>();
-                    data1.put("product", "Chili");
+                    data1.put("product", "Kurkku");
                     data1.put("address", "Jousimiehentie 2");
                     data1.put("price", 2);
                     data1.put("pricedescription", "kg");
                     data1.put("description", "kasvihuoneessa kasvatettuja kurkkuja");
-                    ad.document("Ilmoitus3").set(data1);
+                    ad.document("Ilmoitus5").set(data1);
 
+                    */
 
-                   // TextView productName = findViewById(R.id.productNameText);
-                   // TextView addressField = findViewById(R.id.locationText);
+                    //TextView productName = findViewById(R.id.productNameText);
+                    //TextView addressField = findViewById(R.id.locationText);
 
 
 /*
