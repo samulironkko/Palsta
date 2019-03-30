@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         String address = document.get("address").toString();
                         String description = document.get("description").toString();
-                        int price = document.getLong("price").intValue();
+                        float price = document.getLong("price").floatValue();
                         String pricedescription = document.get("pricedescription").toString();
                         String product = document.get("product").toString();
                         //String location = document.get("location").toString();
