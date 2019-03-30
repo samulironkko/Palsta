@@ -47,8 +47,22 @@ public class AdAdapter extends ArrayAdapter<AdPart> {
             int layoutId = R.layout.ad_list_item;
             convertView = LayoutInflater.from(getContext()).inflate(layoutId, parent, false);
         }
+
+        //name of product
         TextView name =convertView.findViewById(R.id.productNameText);
         name.setText(base.getProduct());
+
+        //price
+        TextView price =convertView.findViewById(R.id.priceText);
+        price.setText(base.getPrice() + "/" + base.getPricedescription());
+
+        //address
+        TextView address =convertView.findViewById(R.id.locationText);
+        address.setText(base.getAddress());
+
+        //description
+        //TextView description =convertView.findViewById(R.id.)
+
         return convertView;
     }
 
