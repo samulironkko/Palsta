@@ -61,7 +61,8 @@ public class AdAdapter extends ArrayAdapter<AdPart> {
         address.setText(base.getAddress());
 
         //description
-        //TextView description =convertView.findViewById(R.id.)
+        TextView description =convertView.findViewById(R.id.descriptionText);
+        price.setText(base.getPrice() + "€/" + base.getDescription());
 
         return convertView;
     }
