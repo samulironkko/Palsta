@@ -29,6 +29,8 @@ import java.util.ArrayList;
 public class NewAdActivity extends AppCompatActivity {
 
 
+    double longitude;
+    double latitude;
 
     private static final int PLACE_SELECTION_REQUEST_CODE = 56789;
     private static final int RESULT_LOAD_IMAGE = 9999;
@@ -44,6 +46,12 @@ public class NewAdActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_ad);
+
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        longitude = bundle.getDouble("EXTRA_LONGITUDE");
+        latitude = bundle.getDouble("EXTRA_LATITUDE");
+
 
         Mapbox.getInstance(this, "pk.eyJ1Ijoic2FtdWxpcm9ua2tvIiwiYSI6ImNqdHF4Z2ViczBpZmI0ZGxsdDF1eHczZzgifQ.wBTnY_6-AdYQKk7dYqFDlQ");
 
@@ -101,7 +109,7 @@ public class NewAdActivity extends AppCompatActivity {
                         .accessToken("pk.eyJ1Ijoic2FtdWxpcm9ua2tvIiwiYSI6ImNqdHF4Z2ViczBpZmI0ZGxsdDF1eHczZzgifQ.wBTnY_6-AdYQKk7dYqFDlQ")
                         .placeOptions(PlacePickerOptions.builder()
                                 .statingCameraPosition(new CameraPosition.Builder()
-                                        .target(new LatLng(40.7544, -73.9862)).zoom(16).build())
+                                        .target(new LatLng(latitude, longitude)).zoom(16).build())
                                 .build())
                         .build(this), PLACE_SELECTION_REQUEST_CODE);
     }

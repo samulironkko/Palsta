@@ -1,7 +1,14 @@
 package com.example.palsta;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -34,12 +41,14 @@ import static com.example.palsta.R.id.productNameText;
 public class MainActivity extends AppCompatActivity {
 
     ArrayList<AdPart> AdParts = new ArrayList<>();
+    double latitude;
+    double longitude;
 
     ListView listView = null;
 
     public static final String EXTRA_MESSAGE ="com.example.palsta.MESSAGE";
 
-    int MY_PERMISSION_ACCESS_COURSE_LOCATION = 100;
+    static final int MY_PERMISSION_ACCESS_FINE_LOCATION = 100;
 
 
     @Override
@@ -48,10 +57,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
+        if ( ContextCompat.checkSelfPermission( this, Manifest.permission.ACCESS_FINE_LOCATION ) == PackageManager.PERMISSION_GRANTED ) {
+            getLocation();
 
-            ActivityCompat.requestPermissions( this, new String[] {  android.Manifest.permission.ACCESS_COARSE_LOCATION  },
-                    MY_PERMISSION_ACCESS_COURSE_LOCATION );
+        } else {
+            ActivityCompat.requestPermissions( this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION }, MY_PERMISSION_ACCESS_FINE_LOCATION );
         }
 
 
@@ -169,9 +179,18 @@ public class MainActivity extends AppCompatActivity {
         DatabaseReference = FirebaseDatabase.getInstance().getReference().child("singleMessage").push();
 */
 
+    }
 
-
-
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == MY_PERMISSION_ACCESS_FINE_LOCATION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                //Permission Granted
+                //Do your work here
+                //Perform operations here only which requires permission
+                getLocation();
+            }
+        }
     }
 
     @Override
@@ -185,6 +204,10 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.newAd){
             Intent intent = new Intent(this, NewAdActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putDouble("EXTRA_LONGITUDE", longitude);
+            bundle.putDouble("EXTRA_LATITUDE", latitude);
+            intent.putExtras(bundle);
             startActivity(intent);
             return true;
         }else if(item.getItemId() == R.id.yourAds){
@@ -199,6 +222,50 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+    }
+
+    public void getLocation() {
+
+        LocationManager locationManager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
+
+        LocationListener locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                longitude = location.getLongitude();
+                latitude = location.getLatitude();
+                Log.d("asdf", String.valueOf(longitude));
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+        };
+
+        Criteria criteria = new Criteria();
+        criteria.setAccuracy(Criteria.ACCURACY_FINE);
+        criteria.setPowerRequirement(Criteria.POWER_HIGH);
+        criteria.setAltitudeRequired(false);
+        criteria.setBearingRequired(false);
+        criteria.setSpeedRequired(false);
+        criteria.setCostAllowed(true);
+        criteria.setHorizontalAccuracy(Criteria.ACCURACY_FINE);
+        criteria.setVerticalAccuracy(Criteria.ACCURACY_FINE);
+
+        final Looper looper = null;
+
+        locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, locationListener, looper);
 
     }
+
 }
