@@ -104,7 +104,7 @@
         <RadioButton
             android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:id="@+id/radio_give"
+            android:id="@+id/radio_sell"
             android:gravity="center"
             android:textSize="20dp"
             android:background="@drawable/radio_flat_selector"
@@ -114,12 +114,12 @@
             android:paddingBottom="3dp"
             android:paddingRight="16dp"
             android:paddingLeft="16dp"
-            android:text="Lahjoita"
+            android:text="Myy"
             />
         <RadioButton
             android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:id="@+id/radio_sell"
+            android:id="@+id/radio_give"
             android:gravity="center"
             android:textSize="20dp"
             android:background="@drawable/radio_flat_selector"
@@ -128,7 +128,7 @@
             android:paddingBottom="3dp"
             android:paddingRight="16dp"
             android:paddingLeft="16dp"
-            android:text="Myy"
+            android:text="Lahjoita"
 
             />
 
@@ -148,6 +148,7 @@
         app:layout_constraintHorizontal_weight="0.5"
         android:hint="Hinta"
         android:textSize="30dp"
+        android:inputType="numberDecimal"
         android:textAlignment="center"
         android:drawableRight="@drawable/baseline_euro_symbol_black_18dp"
         />
@@ -169,7 +170,9 @@
 
     <EditText
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="wrap_content"
+        android:minHeight="100dp"
+        android:gravity="start"
         android:id="@+id/desc_edit_text"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
@@ -180,7 +183,6 @@
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
         android:hint="Kuvaus"
-        android:textAlignment="textStart"
         android:background="@drawable/edit_text_background"
         app:layout_constraintTop_toBottomOf="@id/price_edit_text"
         app:layout_constraintStart_toStartOf="parent"
