@@ -11,7 +11,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -32,7 +34,9 @@ public class NewAdActivity extends AppCompatActivity {
     Button addressButton;
     TextView addressTextView;
     ImageButton addImageButton;
+    EditText priceEditText;
     Spinner unitSpinner;
+    RadioGroup sellGiveRadioGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,11 +50,27 @@ public class NewAdActivity extends AppCompatActivity {
         addImageButton = findViewById(R.id.add_image_button);
         addressTextView = findViewById(R.id.address_textview);
         unitSpinner = findViewById(R.id.unit_spinner);
+        sellGiveRadioGroup = findViewById(R.id.sell_give_group);
+        priceEditText = findViewById(R.id.price_edit_text);
 
         ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(this,
                 R.array.units_array, R.layout.spinner_item);
         spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         unitSpinner.setAdapter(spinnerAdapter);
+
+        sellGiveRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.radio_give) {
+                    priceEditText.setVisibility(View.GONE);
+                    unitSpinner.setVisibility(View.GONE);
+                    priceEditText.setText(null);
+                } else {
+                    priceEditText.setVisibility(View.VISIBLE);
+                    unitSpinner.setVisibility(View.VISIBLE);
+                }
+            }
+        });
 
         mapButton.setOnClickListener(new View.OnClickListener() {
             @Override
