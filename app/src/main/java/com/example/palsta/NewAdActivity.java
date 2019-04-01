@@ -26,6 +26,8 @@ import java.util.ArrayList;
 
 public class NewAdActivity extends AppCompatActivity {
 
+
+
     private static final int PLACE_SELECTION_REQUEST_CODE = 56789;
     private static final int RESULT_LOAD_IMAGE = 9999;
     Button mapButton;
