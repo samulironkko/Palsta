@@ -11,6 +11,9 @@ public class AdPart implements Serializable {
     private String address = new String();
     private  String description = new String();
     private float price;
+    private String pricedescription = new String();
+    private String product = new String();
+
 
     public String getAddress() {
         return address;
@@ -51,9 +54,6 @@ public class AdPart implements Serializable {
     public void setProduct(String product) {
         this.product = product;
     }
-
-    private String pricedescription = new String();
-    private String product = new String();
 
 
     public AdPart(String product1, String address1, float price1, String pricedescription1, String description1){
