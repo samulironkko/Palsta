@@ -159,22 +159,18 @@ public class MainActivity extends AppCompatActivity {
                                 BitmapUtils.getBitmapFromDrawable(getResources().getDrawable(R.drawable.baseline_euro_symbol_black_18dp)),
                                 true
                         );
+                        if ( ContextCompat.checkSelfPermission( MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION ) == PackageManager.PERMISSION_GRANTED ) {
+                            getLocation();
+
+                        } else {
+                            ActivityCompat.requestPermissions( MainActivity.this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION }, MY_PERMISSION_ACCESS_FINE_LOCATION );
+                        }
                     }
                 });
+
             }
         });
 
-
-
-
-
-
-        if ( ContextCompat.checkSelfPermission( this, Manifest.permission.ACCESS_FINE_LOCATION ) == PackageManager.PERMISSION_GRANTED ) {
-            getLocation();
-
-        } else {
-            ActivityCompat.requestPermissions( this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION }, MY_PERMISSION_ACCESS_FINE_LOCATION );
-        }
 
         listView = findViewById(R.id.adList);
 
@@ -456,7 +452,7 @@ public class MainActivity extends AppCompatActivity {
         // Use the earthquakes GeoJSON source to create three layers: One layer for each cluster category.
 // Each point range gets a different fill color.
         int[][] layers = new int[][] {
-                new int[] {150, ContextCompat.getColor(this, R.color.mapbox_plugins_white)},
+                new int[] {150, ContextCompat.getColor(this, R.color.mapbox_plugins_green)},
                 new int[] {20, ContextCompat.getColor(this, R.color.mapbox_plugins_green)},
                 new int[] {0, ContextCompat.getColor(this, R.color.mapbox_blue)}
         };
