@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -13,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -27,7 +30,6 @@ import com.mapbox.mapboxsdk.plugins.places.picker.model.PlacePickerOptions;
 import java.util.ArrayList;
 
 public class NewAdActivity extends AppCompatActivity {
-
 
     double longitude;
     double latitude;
@@ -46,6 +48,7 @@ public class NewAdActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_ad);
+
 
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();

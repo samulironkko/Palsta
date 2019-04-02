@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -22,6 +23,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -31,14 +33,58 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
+import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.maps.MapView;
+import com.mapbox.mapboxsdk.maps.MapboxMap;
+import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
+import com.mapbox.mapboxsdk.maps.Style;
+import com.mapbox.mapboxsdk.style.expressions.Expression;
+import com.mapbox.mapboxsdk.style.layers.CircleLayer;
+import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
+import com.mapbox.mapboxsdk.style.sources.GeoJsonOptions;
+import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
+import com.mapbox.mapboxsdk.utils.BitmapUtils;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import timber.log.Timber;
+
 import static com.example.palsta.R.id.productNameText;
+import static com.mapbox.mapboxsdk.style.expressions.Expression.all;
+import static com.mapbox.mapboxsdk.style.expressions.Expression.division;
+import static com.mapbox.mapboxsdk.style.expressions.Expression.exponential;
+import static com.mapbox.mapboxsdk.style.expressions.Expression.get;
+import static com.mapbox.mapboxsdk.style.expressions.Expression.gt;
+import static com.mapbox.mapboxsdk.style.expressions.Expression.gte;
+import static com.mapbox.mapboxsdk.style.expressions.Expression.has;
+import static com.mapbox.mapboxsdk.style.expressions.Expression.interpolate;
+import static com.mapbox.mapboxsdk.style.expressions.Expression.literal;
+import static com.mapbox.mapboxsdk.style.expressions.Expression.lt;
+import static com.mapbox.mapboxsdk.style.expressions.Expression.rgb;
+import static com.mapbox.mapboxsdk.style.expressions.Expression.stop;
+import static com.mapbox.mapboxsdk.style.expressions.Expression.toNumber;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleColor;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleRadius;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconColor;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconSize;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.textAllowOverlap;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.textColor;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.textField;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.textIgnorePlacement;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.textSize;
 
 public class MainActivity extends AppCompatActivity {
+
+
+    private MapView mapView;
+    private MapboxMap mapboxMap;
 
     ArrayList<AdPart> AdParts = new ArrayList<>();
     double latitude;
@@ -54,7 +100,39 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Mapbox.getInstance(this, "pk.eyJ1Ijoic2FtdWxpcm9ua2tvIiwiYSI6ImNqdHF4Z2ViczBpZmI0ZGxsdDF1eHczZzgifQ.wBTnY_6-AdYQKk7dYqFDlQ");
         setContentView(R.layout.activity_main);
+
+        mapView = findViewById(R.id.mapView);
+
+        mapView.onCreate(savedInstanceState);
+        mapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(@NonNull MapboxMap map) {
+
+                mapboxMap = map;
+
+                map.setStyle(Style.LIGHT, new Style.OnStyleLoaded() {
+                    @Override
+                    public void onStyleLoaded(@NonNull Style style) {
+                        mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(
+                                12.099, -79.045), 3));
+
+                        addClusteredGeoJsonSource(style);
+                        style.addImage(
+                                "cross-icon-id",
+                                BitmapUtils.getBitmapFromDrawable(getResources().getDrawable(R.drawable.baseline_euro_symbol_black_18dp)),
+                                true
+                        );
+                    }
+                });
+            }
+        });
+
+
+
+
 
 
         if ( ContextCompat.checkSelfPermission( this, Manifest.permission.ACCESS_FINE_LOCATION ) == PackageManager.PERMISSION_GRANTED ) {
@@ -63,7 +141,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             ActivityCompat.requestPermissions( this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION }, MY_PERMISSION_ACCESS_FINE_LOCATION );
         }
-
 
         listView = findViewById(R.id.adList);
 
@@ -140,6 +217,8 @@ public class MainActivity extends AppCompatActivity {
 
                     //productName.setText(fields.toString());
                     //price.setText(fields.toString());
+
+
                     AdAdapter adapter = new AdAdapter(MainActivity.this, AdParts);
                     listView.setAdapter(adapter);
                     listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -164,7 +243,6 @@ public class MainActivity extends AppCompatActivity {
                     public void onFailure(@NonNull Exception e) {
                     }
                 });
-
 
 /*
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -221,7 +299,43 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        mapView.onResume();
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mapView.onStart();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mapView.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mapView.onStop();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mapView.onLowMemory();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mapView.onDestroy();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mapView.onSaveInstanceState(outState);
     }
 
     public void getLocation() {
@@ -267,5 +381,91 @@ public class MainActivity extends AppCompatActivity {
         locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, locationListener, looper);
 
     }
+
+
+    private void addClusteredGeoJsonSource(@NonNull Style loadedMapStyle) {
+
+// Add a new source from the GeoJSON data and set the 'cluster' option to true.
+        try {
+            loadedMapStyle.addSource(
+// Point to GeoJSON data. This example visualizes all M1.0+ earthquakes from
+// 12/22/15 to 1/21/16 as logged by USGS' Earthquake hazards program.
+                    new GeoJsonSource("earthquakes",
+                            new URL("https://www.mapbox.com/mapbox-gl-js/assets/earthquakes.geojson"),
+                            new GeoJsonOptions()
+                                    .withCluster(true)
+                                    .withClusterMaxZoom(14)
+                                    .withClusterRadius(50)
+                    )
+            );
+        } catch (MalformedURLException malformedUrlException) {
+            Timber.e("Check the URL %s", malformedUrlException.getMessage());
+        }
+
+        // Use the earthquakes GeoJSON source to create three layers: One layer for each cluster category.
+// Each point range gets a different fill color.
+        int[][] layers = new int[][] {
+                new int[] {150, ContextCompat.getColor(this, R.color.mapbox_plugins_white)},
+                new int[] {20, ContextCompat.getColor(this, R.color.mapbox_plugins_green)},
+                new int[] {0, ContextCompat.getColor(this, R.color.mapbox_blue)}
+        };
+
+//Creating a marker layer for single data points
+        SymbolLayer unclustered = new SymbolLayer("unclustered-points", "earthquakes");
+
+        unclustered.setProperties(
+                iconImage("cross-icon-id"),
+                iconSize(
+                        division(
+                                get("mag"), literal(4.0f)
+                        )
+                ),
+                iconColor(
+                        interpolate(exponential(1), get("mag"),
+                                stop(2.0, rgb(0, 255, 0)),
+                                stop(4.5, rgb(0, 0, 255)),
+                                stop(7.0, rgb(255, 0, 0))
+                        )
+                )
+        );
+        loadedMapStyle.addLayer(unclustered);
+
+        for (int i = 0; i < layers.length; i++) {
+//Add clusters' circles
+            CircleLayer circles = new CircleLayer("cluster-" + i, "earthquakes");
+            circles.setProperties(
+                    circleColor(layers[i][1]),
+                    circleRadius(18f)
+            );
+
+            Expression pointCount = toNumber(get("point_count"));
+
+// Add a filter to the cluster layer that hides the circles based on "point_count"
+            circles.setFilter(
+                    i == 0
+                            ? all(has("point_count"),
+                            gte(pointCount, literal(layers[i][0]))
+                    ) : all(has("point_count"),
+                            gt(pointCount, literal(layers[i][0])),
+                            lt(pointCount, literal(layers[i - 1][0]))
+                    )
+            );
+            loadedMapStyle.addLayer(circles);
+        }
+
+//Add the count labels
+        SymbolLayer count = new SymbolLayer("count", "earthquakes");
+        count.setProperties(
+                textField(Expression.toString(get("point_count"))),
+                textSize(12f),
+                textColor(Color.WHITE),
+                textIgnorePlacement(true),
+                textAllowOverlap(true)
+        );
+        loadedMapStyle.addLayer(count);
+
+    }
+
+
 
 }
