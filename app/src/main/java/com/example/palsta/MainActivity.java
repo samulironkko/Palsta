@@ -382,6 +382,8 @@ public class MainActivity extends AppCompatActivity {
                 longitude = location.getLongitude();
                 latitude = location.getLatitude();
                 Log.d("asdf", String.valueOf(longitude));
+                mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(
+                        latitude, longitude), 3));
             }
 
             @Override
