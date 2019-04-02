@@ -120,8 +120,23 @@ public class MainActivity extends AppCompatActivity {
 
         LinearLayout llBottomSheet = (LinearLayout) findViewById(R.id.bottom_sheet);
 
-        BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(llBottomSheet);
+        final BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(llBottomSheet);
         bottomSheetBehavior.setHideable(false);
+
+        // set callback for changes
+        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                if (newState == BottomSheetBehavior.STATE_DRAGGING && !listIsAtTop()) {
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
+            }
+        });
 
         mapView = findViewById(R.id.mapView);
 
@@ -500,6 +515,14 @@ public class MainActivity extends AppCompatActivity {
         );
         loadedMapStyle.addLayer(count);
 
+    }
+
+    public boolean listIsAtTop() {
+        if (listView.getChildCount() == 0) {
+            return true;
+        }else {
+            return  (listView.getChildAt(0).getTop() == 0 && listView.getFirstVisiblePosition() == 0);
+        }
     }
 
 
