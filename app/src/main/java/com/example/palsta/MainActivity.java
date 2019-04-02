@@ -1,8 +1,14 @@
 package com.example.palsta;
 
+import android.animation.LayoutTransition;
+import android.app.ActionBar;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.Image;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -12,7 +18,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -29,6 +37,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.example.palsta.R.id.gone;
+import static com.example.palsta.R.id.invisible;
+import static com.example.palsta.R.id.productImage;
 import static com.example.palsta.R.id.productNameText;
 
 public class MainActivity extends AppCompatActivity {
@@ -137,11 +148,26 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
                                                 long arg3) {
-
+                            Log.d("gona", arg1.toString());
+                            if(arg1.findViewById(R.id.descriptionText).getVisibility() == View.GONE){
+                                arg1.findViewById(R.id.descriptionText).setVisibility(View.VISIBLE);
+                                /*ImageView imageView = (ImageView)arg1.findViewById(R.id.productImage);
+                                ViewGroup.LayoutParams params = (ViewGroup.LayoutParams)imageView.getLayoutParams();
+                                params.width = -1;
+                                ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams)imageView.getLayoutParams();
+                                marginLayoutParams.leftMargin = 0;
+                                marginLayoutParams.topMargin = 0;
+                                marginLayoutParams.bottomMargin = 0;
+                                ConstraintLayout.LayoutParams constraintLayout = (ConstraintLayout.LayoutParams) findViewById(R.id.con2).getLayoutParams();
+                                constraintLayout.topToBottom = R.id.productImage;
+                                arg1.findViewById(R.id.con2).requestLayout();*/
+                            }else{
+                                arg1.findViewById(R.id.descriptionText).setVisibility(View.GONE);
+                            }
                             //Log.d("asdf","Items " +  AdParts.get(arg2).getStr() );
-                            Intent intent = new Intent(getBaseContext(), SingleAd.class);
-                            intent.putExtra(EXTRA_MESSAGE, AdParts.get(arg2));
-                            startActivity(intent);
+                            //Intent intent = new Intent(getBaseContext(), SingleAd.class);
+                            //intent.putExtra(EXTRA_MESSAGE, AdParts.get(arg2));
+                            //startActivity(intent);
                         }
 
                     });
