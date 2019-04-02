@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
 
     ListView listView = null;
 
-    public static final String EXTRA_MESSAGE ="com.example.palsta.MESSAGE";
+    public static final String EXTRA_MESSAGE = "com.example.palsta.MESSAGE";
 
     static final int MY_PERMISSION_ACCESS_FINE_LOCATION = 100;
 
@@ -159,12 +159,7 @@ public class MainActivity extends AppCompatActivity {
                                 BitmapUtils.getBitmapFromDrawable(getResources().getDrawable(R.drawable.baseline_euro_symbol_black_18dp)),
                                 true
                         );
-                        if ( ContextCompat.checkSelfPermission( MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION ) == PackageManager.PERMISSION_GRANTED ) {
-                            getLocation();
-
-                        } else {
-                            ActivityCompat.requestPermissions( MainActivity.this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION }, MY_PERMISSION_ACCESS_FINE_LOCATION );
-                        }
+                        getLocation();
                     }
                 });
 
@@ -180,35 +175,35 @@ public class MainActivity extends AppCompatActivity {
         final CollectionReference ad = db.collection("ad");
         //ad.get().addOnCompleteListener(new OnCompleteListener < DocumentSnapshot > () {
         db.collection("ad")
-        .get()
-        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task <QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        String address = document.get("address").toString();
-                        String description = document.get("description").toString();
-                        float price = document.getLong("price").floatValue();
-                        String pricedescription = document.get("pricedescription").toString();
-                        String product = document.get("product").toString();
-                        //String location = document.get("location").toString();
-                        Log.d("asdf", product);
-                        Log.d("asdf", address);
-                        Log.d("asdf", String.valueOf(price));
-                        Log.d("asdf", pricedescription);
-                        Log.d("asdf", description);
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                String address = document.get("address").toString();
+                                String description = document.get("description").toString();
+                                float price = document.getLong("price").floatValue();
+                                String pricedescription = document.get("pricedescription").toString();
+                                String product = document.get("product").toString();
+                                //String location = document.get("location").toString();
+                                Log.d("asdf", product);
+                                Log.d("asdf", address);
+                                Log.d("asdf", String.valueOf(price));
+                                Log.d("asdf", pricedescription);
+                                Log.d("asdf", description);
 
-                        AdPart part = new AdPart(product, address, price, pricedescription, description);
-                        AdParts.add(part);
+                                AdPart part = new AdPart(product, address, price, pricedescription, description);
+                                AdParts.add(part);
 
-                        //TextView productTextView = findViewById(productNameText);
-                        //productTextView.setText(product);
+                                //TextView productTextView = findViewById(productNameText);
+                                //productTextView.setText(product);
 
-                        Log.d("asdf", document.getId() + " => " + document.getData());
+                                Log.d("asdf", document.getId() + " => " + document.getData());
 
-                    }
-                    QuerySnapshot doc = task.getResult();
-                    //StringBuilder fields = new StringBuilder("");
+                            }
+                            QuerySnapshot doc = task.getResult();
+                            //StringBuilder fields = new StringBuilder("");
 
                     /*
                     add new table
@@ -223,8 +218,8 @@ public class MainActivity extends AppCompatActivity {
 
                     */
 
-                    //TextView productName = findViewById(R.id.productNameText);
-                    //TextView addressField = findViewById(R.id.locationText);
+                            //TextView productName = findViewById(R.id.productNameText);
+                            //TextView addressField = findViewById(R.id.locationText);
 
 
 /*
@@ -238,27 +233,27 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("asdf", description);
                     Log.d("asdf", location);
 */
-                    //fields.append(product + "\n");
-                    //fields.append(price).append("€/").append(pricedescription + "\n");
-                    //fields.append(address);
+                            //fields.append(product + "\n");
+                            //fields.append(price).append("€/").append(pricedescription + "\n");
+                            //fields.append(address);
 
-                    //sijainti
-                    //TextView price = findViewById(R.id.priceText);
+                            //sijainti
+                            //TextView price = findViewById(R.id.priceText);
 
-                    //productName.setText(fields.toString());
-                    //price.setText(fields.toString());
+                            //productName.setText(fields.toString());
+                            //price.setText(fields.toString());
 
 
-                    AdAdapter adapter = new AdAdapter(MainActivity.this, AdParts);
-                    listView.setAdapter(adapter);
-                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            AdAdapter adapter = new AdAdapter(MainActivity.this, AdParts);
+                            listView.setAdapter(adapter);
+                            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-                        @Override
-                        public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-                                                long arg3) {
-                            Log.d("gona", arg1.toString());
-                            if(arg1.findViewById(R.id.descriptionText).getVisibility() == View.GONE){
-                                arg1.findViewById(R.id.descriptionText).setVisibility(View.VISIBLE);
+                                @Override
+                                public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+                                                        long arg3) {
+                                    Log.d("gona", arg1.toString());
+                                    if (arg1.findViewById(R.id.descriptionText).getVisibility() == View.GONE) {
+                                        arg1.findViewById(R.id.descriptionText).setVisibility(View.VISIBLE);
                                 /*ImageView imageView = (ImageView)arg1.findViewById(R.id.productImage);
                                 ViewGroup.LayoutParams params = (ViewGroup.LayoutParams)imageView.getLayoutParams();
                                 params.width = -1;
@@ -269,20 +264,20 @@ public class MainActivity extends AppCompatActivity {
                                 ConstraintLayout.LayoutParams constraintLayout = (ConstraintLayout.LayoutParams) findViewById(R.id.con2).getLayoutParams();
                                 constraintLayout.topToBottom = R.id.productImage;
                                 arg1.findViewById(R.id.con2).requestLayout();*/
-                            }else{
-                                arg1.findViewById(R.id.descriptionText).setVisibility(View.GONE);
-                            }
-                            //Log.d("asdf","Items " +  AdParts.get(arg2).getStr() );
-                            //Intent intent = new Intent(getBaseContext(), SingleAd.class);
-                            //intent.putExtra(EXTRA_MESSAGE, AdParts.get(arg2));
-                            //startActivity(intent);
+                                    } else {
+                                        arg1.findViewById(R.id.descriptionText).setVisibility(View.GONE);
+                                    }
+                                    //Log.d("asdf","Items " +  AdParts.get(arg2).getStr() );
+                                    //Intent intent = new Intent(getBaseContext(), SingleAd.class);
+                                    //intent.putExtra(EXTRA_MESSAGE, AdParts.get(arg2));
+                                    //startActivity(intent);
+                                }
+
+                            });
                         }
 
-                    });
-                }
-
-            }
-        })
+                    }
+                })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
@@ -325,7 +320,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.newAd){
+        if (item.getItemId() == R.id.newAd) {
             Intent intent = new Intent(this, NewAdActivity.class);
             Bundle bundle = new Bundle();
             bundle.putDouble("EXTRA_LONGITUDE", longitude);
@@ -333,7 +328,7 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtras(bundle);
             startActivity(intent);
             return true;
-        }else if(item.getItemId() == R.id.yourAds){
+        } else if (item.getItemId() == R.id.yourAds) {
             Intent intent = new Intent(this, YourAds.class);
             startActivity(intent);
             return true;
@@ -385,7 +380,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void getLocation() {
 
-        LocationManager locationManager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
         LocationListener locationListener = new LocationListener() {
             @Override
@@ -425,6 +420,12 @@ public class MainActivity extends AppCompatActivity {
 
         final Looper looper = null;
 
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSION_ACCESS_FINE_LOCATION);
+
+            return;
+        }
         locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, locationListener, looper);
 
     }
