@@ -157,7 +157,6 @@ public class NewAdActivity extends AppCompatActivity {
         Log.d("ass", String.valueOf(price));
         Log.d("ass", pricedescription);
 
-        //FirebaseFirestore db = FirebaseFirestore.getInstance();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         Map<String, Object> data = new HashMap<>();
@@ -181,37 +180,6 @@ public class NewAdActivity extends AppCompatActivity {
                         Log.w("lol", "Error adding document", e);
                     }
                 });
-
-
-
-        // Spinner mySpinner = (Spinner) findViewById(R.id.unit_spinner);
-       // String pricedescription = mySpinner.getSelectedItem().toString();
-
-        //String product = convertView.findViewById(R.id.priceText);
-
-        //String address = document.get("address").toString();
-
-        /*
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db = FirebaseFirestore.getInstance();
-
-        final CollectionReference ad = db.collection("ad");
-
-        db.collection("ad")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-
-                    Map<String, Object> data1 = new HashMap<>();
-                    data1.put("product","Kurkku");
-                    data1.put("address","Jousimiehentie 2");
-                    data1.put("price",2);
-                    data1.put("pricedescription","kg");
-                    data1.put("description","kasvihuoneessa kasvatettuja kurkkuja");
-                    ad.document("Ilmoitus5").
-                    set(data1);
-                };
-
-    */
     }
 
 
