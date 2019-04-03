@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -20,6 +21,13 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.mapbox.api.geocoding.v5.models.CarmenFeature;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
@@ -28,6 +36,10 @@ import com.mapbox.mapboxsdk.plugins.places.picker.PlacePicker;
 import com.mapbox.mapboxsdk.plugins.places.picker.model.PlacePickerOptions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import static java.lang.String.valueOf;
 
 public class NewAdActivity extends AppCompatActivity {
 
@@ -43,6 +55,7 @@ public class NewAdActivity extends AppCompatActivity {
     EditText priceEditText;
     Spinner unitSpinner;
     RadioGroup sellGiveRadioGroup;
+    Button publishButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +78,7 @@ public class NewAdActivity extends AppCompatActivity {
         unitSpinner = findViewById(R.id.unit_spinner);
         sellGiveRadioGroup = findViewById(R.id.sell_give_group);
         priceEditText = findViewById(R.id.price_edit_text);
+        publishButton = findViewById(R.id.publish_button);
 
         ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(this,
                 R.array.units_array, R.layout.spinner_item);
@@ -101,11 +115,106 @@ public class NewAdActivity extends AppCompatActivity {
                 startActivityForResult(galleryIntent, RESULT_LOAD_IMAGE);
             }
         });
+        publishButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                publishAdActivity();
+            }
+        });
+
+
     }
 
     /**
      * Set up the PlacePickerOptions and startActivityForResult
      */
+    private void publishAdActivity(){
+
+        String product = new String();
+        String address = new String();
+        //float price;
+        //String pricedescription = new String();
+        String description = new String();
+
+        product = ((EditText)findViewById(R.id.product_name_edit_text)).getText().toString();
+        address = ((TextView)findViewById(R.id.address_textview)).getText().toString();
+
+        EditText edt = (EditText) findViewById(R.id.price_edit_text);
+        float price = Float.valueOf(edt.getText().toString());
+
+
+
+
+        description = ((EditText)findViewById(R.id.desc_edit_text)).getText().toString();
+
+        Spinner mySpinner = (Spinner) findViewById(R.id.unit_spinner);
+        String pricedescription = mySpinner.getSelectedItem().toString();
+
+
+        Log.d("ass", product);
+        Log.d("ass", address);
+        Log.d("ass", description);
+        Log.d("ass", String.valueOf(price));
+        Log.d("ass", pricedescription);
+
+        //FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("product",product);
+        data.put("address",address);
+        data.put("price",price);
+        data.put("pricedescription",pricedescription);
+        data.put("description",description);
+
+        db.collection("ad")
+                .add(data)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.d("lol", "DocumentSnapshot written with ID: " + documentReference.getId());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("lol", "Error adding document", e);
+                    }
+                });
+
+
+
+        // Spinner mySpinner = (Spinner) findViewById(R.id.unit_spinner);
+       // String pricedescription = mySpinner.getSelectedItem().toString();
+
+        //String product = convertView.findViewById(R.id.priceText);
+
+        //String address = document.get("address").toString();
+
+        /*
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db = FirebaseFirestore.getInstance();
+
+        final CollectionReference ad = db.collection("ad");
+
+        db.collection("ad")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+
+                    Map<String, Object> data1 = new HashMap<>();
+                    data1.put("product","Kurkku");
+                    data1.put("address","Jousimiehentie 2");
+                    data1.put("price",2);
+                    data1.put("pricedescription","kg");
+                    data1.put("description","kasvihuoneessa kasvatettuja kurkkuja");
+                    ad.document("Ilmoitus5").
+                    set(data1);
+                };
+
+    */
+    }
+
+
     private void goToPickerActivity() {
         startActivityForResult(
                 new PlacePicker.IntentBuilder()
