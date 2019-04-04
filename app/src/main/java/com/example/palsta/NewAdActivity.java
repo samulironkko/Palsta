@@ -29,6 +29,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mapbox.api.geocoding.v5.models.CarmenFeature;
+import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.geometry.LatLng;
@@ -42,6 +43,9 @@ import java.util.Map;
 import static java.lang.String.valueOf;
 
 public class NewAdActivity extends AppCompatActivity {
+
+    double pointerLatitude;
+    double pointerLongitude;
 
     double longitude;
     double latitude;
@@ -130,6 +134,8 @@ public class NewAdActivity extends AppCompatActivity {
      */
     private void publishAdActivity(){
 
+
+
         String product = new String();
         String address = new String();
         //float price;
@@ -156,6 +162,11 @@ public class NewAdActivity extends AppCompatActivity {
         Log.d("ass", description);
         Log.d("ass", String.valueOf(price));
         Log.d("ass", pricedescription);
+        Log.d("ass", valueOf(pointerLongitude));
+        Log.d("ass", valueOf(pointerLatitude));
+
+        //Location lastLocation = locationEngine.getLastLocation();
+
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -204,6 +215,10 @@ public class NewAdActivity extends AppCompatActivity {
             CarmenFeature carmenFeature = PlacePicker.getPlace(data);
 
             addressTextView.setText(carmenFeature.placeName());
+            Point point = carmenFeature.center();
+            pointerLatitude = point.latitude();
+            pointerLongitude = point.longitude();
+
         }else if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && data != null) {
             Uri SelectedImage = data.getData();
             String[] FilePathColumn = {MediaStore.Images.Media.DATA};
