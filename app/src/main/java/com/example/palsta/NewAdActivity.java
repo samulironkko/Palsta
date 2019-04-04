@@ -21,6 +21,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.mapbox.api.geocoding.v5.models.CarmenFeature;
+import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.geometry.LatLng;
@@ -127,6 +128,7 @@ public class NewAdActivity extends AppCompatActivity {
             CarmenFeature carmenFeature = PlacePicker.getPlace(data);
 
             addressTextView.setText(carmenFeature.placeName());
+
         }else if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && data != null) {
             Uri SelectedImage = data.getData();
             String[] FilePathColumn = {MediaStore.Images.Media.DATA};

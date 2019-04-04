@@ -6,6 +6,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.PointF;
 import android.media.Image;
 import android.os.Build;
 import android.graphics.Color;
@@ -36,6 +37,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.cocoahero.android.geojson.Feature;
+import com.cocoahero.android.geojson.FeatureCollection;
+import com.cocoahero.android.geojson.GeoJSONObject;
+import com.cocoahero.android.geojson.Point;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -57,10 +62,14 @@ import com.mapbox.mapboxsdk.style.sources.GeoJsonOptions;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.mapboxsdk.utils.BitmapUtils;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import timber.log.Timber;
@@ -98,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
 
     private MapView mapView;
     private MapboxMap mapboxMap;
+    JSONObject geoJSON;
 
     ArrayList<AdPart> AdParts = new ArrayList<>();
     double latitude;
@@ -117,6 +127,28 @@ public class MainActivity extends AppCompatActivity {
 
         Mapbox.getInstance(this, "pk.eyJ1Ijoic2FtdWxpcm9ua2tvIiwiYSI6ImNqdHF4Z2ViczBpZmI0ZGxsdDF1eHczZzgifQ.wBTnY_6-AdYQKk7dYqFDlQ");
         setContentView(R.layout.activity_main);
+
+        FeatureCollection featureCollection = new FeatureCollection();
+
+        Point point = new Point(38.889, -77.035);
+        Feature feature = new Feature(point);
+        feature.setIdentifier("Ilmoitus1");
+        feature.setProperties(new JSONObject());
+
+        featureCollection.addFeature(feature);
+
+        point = new Point(38.9, -76.0);
+        feature = new Feature(point);
+        feature.setIdentifier("Ilmoitus2");
+        feature.setProperties(new JSONObject());
+
+        featureCollection.addFeature(feature);
+        try {
+            geoJSON = featureCollection.toJSON();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
 
         LinearLayout llBottomSheet = (LinearLayout) findViewById(R.id.bottom_sheet);
 
@@ -147,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
 
                 mapboxMap = map;
 
-                map.setStyle(Style.LIGHT, new Style.OnStyleLoaded() {
+                map.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
                     @Override
                     public void onStyleLoaded(@NonNull Style style) {
                         mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(
@@ -160,6 +192,7 @@ public class MainActivity extends AppCompatActivity {
                                 true
                         );
                         getLocation();
+
                     }
                 });
 
@@ -297,6 +330,7 @@ public class MainActivity extends AppCompatActivity {
         DatabaseReference = FirebaseDatabase.getInstance().getReference().child("singleMessage").push();
 */
 
+
     }
 
     @Override
@@ -389,7 +423,7 @@ public class MainActivity extends AppCompatActivity {
                 latitude = location.getLatitude();
                 Log.d("asdf", String.valueOf(longitude));
                 mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(
-                        latitude, longitude), 3));
+                        latitude, longitude), 10));
             }
 
             @Override
@@ -434,21 +468,18 @@ public class MainActivity extends AppCompatActivity {
     private void addClusteredGeoJsonSource(@NonNull Style loadedMapStyle) {
 
 // Add a new source from the GeoJSON data and set the 'cluster' option to true.
-        try {
-            loadedMapStyle.addSource(
+        loadedMapStyle.addSource(
 // Point to GeoJSON data. This example visualizes all M1.0+ earthquakes from
 // 12/22/15 to 1/21/16 as logged by USGS' Earthquake hazards program.
-                    new GeoJsonSource("earthquakes",
-                            new URL("https://www.mapbox.com/mapbox-gl-js/assets/earthquakes.geojson"),
-                            new GeoJsonOptions()
-                                    .withCluster(true)
-                                    .withClusterMaxZoom(14)
-                                    .withClusterRadius(50)
-                    )
-            );
-        } catch (MalformedURLException malformedUrlException) {
-            Timber.e("Check the URL %s", malformedUrlException.getMessage());
-        }
+                new GeoJsonSource("earthquake",
+                        geoJSON.toString(),
+                        //  new URL("https://www.mapbox.com/mapbox-gl-js/assets/earthquakes.geojson"),
+                        new GeoJsonOptions()
+                                .withCluster(true)
+                                .withClusterMaxZoom(14)
+                                .withClusterRadius(50)
+                )
+        );
 
         // Use the earthquakes GeoJSON source to create three layers: One layer for each cluster category.
 // Each point range gets a different fill color.
@@ -459,7 +490,7 @@ public class MainActivity extends AppCompatActivity {
         };
 
 //Creating a marker layer for single data points
-        SymbolLayer unclustered = new SymbolLayer("unclustered-points", "earthquakes");
+        SymbolLayer unclustered = new SymbolLayer("unclustered-points", "earthquake");
 
         unclustered.setProperties(
                 iconImage("cross-icon-id"),
@@ -480,7 +511,7 @@ public class MainActivity extends AppCompatActivity {
 
         for (int i = 0; i < layers.length; i++) {
 //Add clusters' circles
-            CircleLayer circles = new CircleLayer("cluster-" + i, "earthquakes");
+            CircleLayer circles = new CircleLayer("cluster-" + i, "earthquake");
             circles.setProperties(
                     circleColor(layers[i][1]),
                     circleRadius(18f)
@@ -502,7 +533,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
 //Add the count labels
-        SymbolLayer count = new SymbolLayer("count", "earthquakes");
+        SymbolLayer count = new SymbolLayer("count", "earthquake");
         count.setProperties(
                 textField(Expression.toString(get("point_count"))),
                 textSize(12f),
