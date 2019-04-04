@@ -208,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
                                 String id = document.getId();
                                 geoPoint = document.getGeoPoint("geo");
                                 geoLatitude = geoPoint.getLatitude();
-                                geoLongitude = geoPoint.getLatitude();
+                                geoLongitude = geoPoint.getLongitude();
                                 point = new Point(geoLatitude, geoLongitude);
                                 feature = new Feature(point);
                                 feature.setIdentifier(id);
@@ -222,6 +222,8 @@ public class MainActivity extends AppCompatActivity {
                                 Log.d("asdf", String.valueOf(price));
                                 Log.d("asdf", pricedescription);
                                 Log.d("asdf", description);
+                                Log.d("asdf", String.valueOf(geoLatitude));
+                                Log.d("asdf", String.valueOf(geoLongitude));
 
                                 AdPart part = new AdPart(product, address, price, pricedescription, description);
                                 AdParts.add(part);
