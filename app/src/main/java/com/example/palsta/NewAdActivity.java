@@ -27,6 +27,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mapbox.api.geocoding.v5.models.CarmenFeature;
 import com.mapbox.geojson.Point;
@@ -176,6 +177,10 @@ public class NewAdActivity extends AppCompatActivity {
         data.put("price",price);
         data.put("pricedescription",pricedescription);
         data.put("description",description);
+        //location: new firebase.firestore.GeoPoint(pointerLatitude, pointerLongitude);
+        //new GeoPoint(latitude = pointerLatitude, longitude = pointerLongitude);
+
+        data.put("geo", new GeoPoint(pointerLatitude,pointerLongitude));
 
         db.collection("ad")
                 .add(data)
