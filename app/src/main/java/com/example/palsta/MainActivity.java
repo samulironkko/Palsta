@@ -47,6 +47,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mapbox.mapboxsdk.Mapbox;
@@ -109,6 +110,11 @@ public class MainActivity extends AppCompatActivity {
     private MapView mapView;
     private MapboxMap mapboxMap;
     JSONObject geoJSON;
+    Feature feature;
+    Point point;
+    GeoPoint geoPoint;
+    double geoLatitude;
+    double geoLongitude;
 
     ArrayList<AdPart> AdParts = new ArrayList<>();
     double latitude;
@@ -131,10 +137,12 @@ public class MainActivity extends AppCompatActivity {
         Mapbox.getInstance(this, "pk.eyJ1Ijoic2FtdWxpcm9ua2tvIiwiYSI6ImNqdHF4Z2ViczBpZmI0ZGxsdDF1eHczZzgifQ.wBTnY_6-AdYQKk7dYqFDlQ");
         setContentView(R.layout.activity_main);
 
-        FeatureCollection featureCollection = new FeatureCollection();
+        final FeatureCollection featureCollection = new FeatureCollection();
 
-        Point point = new Point(38.889, -77.035);
-        Feature feature = new Feature(point);
+
+/*
+        point = new Point(38.889, -77.035);
+        feature = new Feature(point);
         feature.setIdentifier("Ilmoitus1");
         feature.setProperties(new JSONObject());
 
@@ -151,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
+*/
 
         LinearLayout llBottomSheet = (LinearLayout) findViewById(R.id.bottom_sheet);
 
@@ -176,31 +184,6 @@ public class MainActivity extends AppCompatActivity {
         mapView = findViewById(R.id.mapView);
 
         mapView.onCreate(savedInstanceState);
-        mapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(@NonNull MapboxMap map) {
-
-                mapboxMap = map;
-
-                map.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
-                    @Override
-                    public void onStyleLoaded(@NonNull Style style) {
-                        mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(
-                                12.099, -79.045), 3));
-
-                        addClusteredGeoJsonSource(style);
-                        style.addImage(
-                                "cross-icon-id",
-                                BitmapUtils.getBitmapFromDrawable(getResources().getDrawable(R.drawable.baseline_euro_symbol_black_18dp)),
-                                true
-                        );
-                        getLocation();
-
-                    }
-                });
-
-            }
-        });
 
 
         listView = findViewById(R.id.adList);
@@ -222,6 +205,17 @@ public class MainActivity extends AppCompatActivity {
                                 float price = document.getLong("price").floatValue();
                                 String pricedescription = document.get("pricedescription").toString();
                                 String product = document.get("product").toString();
+                                String id = document.getId();
+                                geoPoint = document.getGeoPoint("geo");
+                                geoLatitude = geoPoint.getLatitude();
+                                geoLongitude = geoPoint.getLatitude();
+                                point = new Point(geoLatitude, geoLongitude);
+                                feature = new Feature(point);
+                                feature.setIdentifier(id);
+                                feature.setProperties(new JSONObject());
+
+                                featureCollection.addFeature(feature);
+
                                 //String location = document.get("location").toString();
                                 Log.d("asdf", product);
                                 Log.d("asdf", address);
@@ -238,7 +232,37 @@ public class MainActivity extends AppCompatActivity {
                                 Log.d("asdf", document.getId() + " => " + document.getData());
 
                             }
+                            try {
+                                geoJSON = featureCollection.toJSON();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                             QuerySnapshot doc = task.getResult();
+                            mapView.getMapAsync(new OnMapReadyCallback() {
+                                @Override
+                                public void onMapReady(@NonNull MapboxMap map) {
+
+                                    mapboxMap = map;
+
+                                    map.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
+                                        @Override
+                                        public void onStyleLoaded(@NonNull Style style) {
+                                            mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(
+                                                    12.099, -79.045), 3));
+
+                                            addClusteredGeoJsonSource(style);
+                                            style.addImage(
+                                                    "cross-icon-id",
+                                                    BitmapUtils.getBitmapFromDrawable(getResources().getDrawable(R.drawable.baseline_euro_symbol_black_18dp)),
+                                                    true
+                                            );
+                                            getLocation();
+
+                                        }
+                                    });
+
+                                }
+                            });
                             //StringBuilder fields = new StringBuilder("");
 
                     /*
