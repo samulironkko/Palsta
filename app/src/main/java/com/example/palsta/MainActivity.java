@@ -120,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
     double latitude;
     double longitude;
 
+
     ListView listView = null;
 
     public static final String EXTRA_MESSAGE = "com.example.palsta.MESSAGE";
@@ -232,7 +233,6 @@ public class MainActivity extends AppCompatActivity {
                                 //productTextView.setText(product);
 
                                 Log.d("asdf", document.getId() + " => " + document.getData());
-
                             }
                             try {
                                 geoJSON = featureCollection.toJSON();
@@ -259,10 +259,8 @@ public class MainActivity extends AppCompatActivity {
                                                     true
                                             );
                                             getLocation();
-
                                         }
                                     });
-
                                 }
                             });
                             //StringBuilder fields = new StringBuilder("");

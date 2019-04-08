@@ -79,12 +79,10 @@ public class NewAdActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_ad);
 
-
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         longitude = bundle.getDouble("EXTRA_LONGITUDE");
         latitude = bundle.getDouble("EXTRA_LATITUDE");
-
 
         Mapbox.getInstance(this, "pk.eyJ1Ijoic2FtdWxpcm9ua2tvIiwiYSI6ImNqdHF4Z2ViczBpZmI0ZGxsdDF1eHczZzgifQ.wBTnY_6-AdYQKk7dYqFDlQ");
 
@@ -145,15 +143,12 @@ public class NewAdActivity extends AppCompatActivity {
             }
         });
 
-
     }
 
     /**
      * Set up the PlacePickerOptions and startActivityForResult
      */
     private void publishAdActivity(){
-
-
 
         String product = new String();
         String address = new String();
@@ -166,9 +161,6 @@ public class NewAdActivity extends AppCompatActivity {
 
         EditText edt = (EditText) findViewById(R.id.price_edit_text);
         float price = Float.valueOf(edt.getText().toString());
-
-
-
 
         description = ((EditText)findViewById(R.id.desc_edit_text)).getText().toString();
 
@@ -185,7 +177,6 @@ public class NewAdActivity extends AppCompatActivity {
         Log.d("ass", valueOf(pointerLatitude));
 
         //Location lastLocation = locationEngine.getLastLocation();
-
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -282,10 +273,9 @@ public class NewAdActivity extends AppCompatActivity {
 
           //  addImageButton.setImageBitmap(BitmapFactory.decodeFile(picturePath));
 
-
         }
-
     }
+<<<<<<< Updated upstream
 
 
     @Override
@@ -300,4 +290,6 @@ public class NewAdActivity extends AppCompatActivity {
         }
     }
 
+=======
+>>>>>>> Stashed changes
 }
