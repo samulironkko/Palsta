@@ -4,6 +4,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.mapbox.mapboxsdk.geometry.LatLng;
+
 import java.io.Serializable;
 
 public class AdPart implements Serializable {
@@ -13,6 +15,16 @@ public class AdPart implements Serializable {
     private float price;
     private String pricedescription = new String();
     private String product = new String();
+
+    public LatLng getLatLng() {
+        return latLng;
+    }
+
+    public void setLatLng(LatLng latLng) {
+        this.latLng = latLng;
+    }
+
+    private LatLng latLng;
 
 
     public String getAddress() {
@@ -56,12 +68,13 @@ public class AdPart implements Serializable {
     }
 
 
-    public AdPart(String product1, String address1, float price1, String pricedescription1, String description1){
+    public AdPart(String product1, String address1, float price1, String pricedescription1, String description1, LatLng latLong1){
         //photo = photo1;
         product = product1;
         address = address1;
         price = price1;
         pricedescription = pricedescription1;
         description = description1;
+        latLng = latLong1;
     }
 }
