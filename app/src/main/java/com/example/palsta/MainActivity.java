@@ -81,6 +81,8 @@ import org.json.JSONObject;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
@@ -238,7 +240,14 @@ public class MainActivity extends AppCompatActivity {
                                 Log.d("asdf", String.valueOf(geoLatitude));
                                 Log.d("asdf", String.valueOf(geoLongitude));
 
-                                AdPart part = new AdPart(product, address, price, pricedescription, description, geoLatLng);
+
+                                AdPart part = new AdPart();
+                                part.setAddress(address);
+                                part.setProduct(product);
+                                part.setDescription(description);
+                                part.setPricedescription(pricedescription);
+                                part.setLatLng(geoLatLng);
+                                part.setPrice(price);
                                 AdParts.add(part);
 
                                 //TextView productTextView = findViewById(productNameText);
@@ -436,6 +445,18 @@ public class MainActivity extends AppCompatActivity {
             public void onLocationChanged(Location location) {
                 longitude = location.getLongitude();
                 latitude = location.getLatitude();
+                LatLng userLatLng = new LatLng(latitude,longitude);
+                iterator = AdParts.listIterator();
+                while (iterator.hasNext()) {
+                    current = iterator.next();
+                    current.setDistance(userLatLng.distanceTo(current.getLatLng()));
+                }
+                Collections.sort(AdParts, new Comparator<AdPart>() {
+                    @Override
+                    public int compare(AdPart o1, AdPart o2) {
+                        return Double.compare(o1.getDistance(), o2.getDistance());
+                    }
+                });
                 Log.d("asdf", String.valueOf(longitude));
                 mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(
                         latitude, longitude), 10));
@@ -484,6 +505,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onMapReady(@NonNull final MapboxMap map) {
                 mapboxMap = map;
+                mapboxMap.getUiSettings().setTiltGesturesEnabled(false);
                 map.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
                     @Override
                     public void onStyleLoaded(@NonNull Style style) {

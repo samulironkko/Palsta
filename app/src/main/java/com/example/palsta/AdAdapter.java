@@ -64,6 +64,9 @@ public class AdAdapter extends ArrayAdapter<AdPart> {
         TextView description =convertView.findViewById(R.id.descriptionText);
         description.setText(base.getDescription());
 
+        TextView distance = convertView.findViewById(R.id.distanceText);
+        distance.setText(base.getDistance() + "m");
+
         return convertView;
     }
 

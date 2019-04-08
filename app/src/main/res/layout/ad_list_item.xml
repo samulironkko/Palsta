@@ -50,6 +50,16 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/distanceText"
+            app:layout_constraintTop_toBottomOf="@+id/priceText"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:text="aaa"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:id="@+id/productNameText"
             android:text="ab"
             android:textSize="20sp"

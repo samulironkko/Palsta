@@ -16,6 +16,16 @@ public class AdPart implements Serializable {
     private String pricedescription = new String();
     private String product = new String();
 
+    public double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
+    }
+
+    private double distance;
+
     public LatLng getLatLng() {
         return latLng;
     }
@@ -68,13 +78,7 @@ public class AdPart implements Serializable {
     }
 
 
-    public AdPart(String product1, String address1, float price1, String pricedescription1, String description1, LatLng latLong1){
-        //photo = photo1;
-        product = product1;
-        address = address1;
-        price = price1;
-        pricedescription = pricedescription1;
-        description = description1;
-        latLng = latLong1;
+    public AdPart(){
+
     }
 }
