@@ -180,6 +180,10 @@ public class MainActivity extends AppCompatActivity {
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 if (newState == BottomSheetBehavior.STATE_DRAGGING && !listIsAtTop()) {
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                }else if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                    listView.setEnabled(false);
+                }else if (newState == BottomSheetBehavior.STATE_EXPANDED) {
+                    listView.setEnabled(true);
                 }
             }
 
