@@ -1,11 +1,20 @@
 package com.example.palsta;
 
+import android.Manifest;
+import android.content.Context;
 import android.animation.LayoutTransition;
 import android.app.ActionBar;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Looper;
 import android.graphics.PointF;
 import android.media.Image;
 import android.os.Build;
@@ -15,6 +24,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Looper;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
@@ -73,12 +83,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import timber.log.Timber;
 
 import static com.example.palsta.R.id.gone;
 import static com.example.palsta.R.id.invisible;
 import static com.example.palsta.R.id.productImage;
+import timber.log.Timber;
+
 import static com.example.palsta.R.id.productNameText;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.all;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.division;
@@ -130,6 +143,18 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if(sharedPreferences.getBoolean("firstTime", true)){
+            String uniqueID = UUID.randomUUID().toString();
+            Log.d("1234", uniqueID);
+            sharedPreferences.edit().putString("UUID", uniqueID).apply();
+            sharedPreferences.edit().putBoolean("firstTime", false).apply();
+        }else{
+            Log.d("1234", sharedPreferences.getString("UUID", null));
+        }
+
+
 
         //if crashes add following line
         FirebaseApp.initializeApp(this);
@@ -317,7 +342,7 @@ public class MainActivity extends AppCompatActivity {
                                     if (arg1.findViewById(R.id.descriptionText).getVisibility() == View.GONE) {
                                         arg1.findViewById(R.id.descriptionText).setVisibility(View.VISIBLE);
                                 /*ImageView imageView = (ImageView)arg1.findViewById(R.id.productImage);
-                                ViewGroup.LayoutParams params = (ViewGroup.LayoutParams)imageView.getLayoutParams();
+                                  ViewGroup.LayoutParams params = (ViewGroup.LayoutParams)imageView.getLayoutParams();
                                 params.width = -1;
                                 ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams)imageView.getLayoutParams();
                                 marginLayoutParams.leftMargin = 0;
