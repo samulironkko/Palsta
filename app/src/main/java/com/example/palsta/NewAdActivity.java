@@ -1,13 +1,17 @@
 package com.example.palsta;
 
+import android.Manifest;
 import android.app.ActionBar;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -37,9 +41,15 @@ import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.plugins.places.picker.PlacePicker;
 import com.mapbox.mapboxsdk.plugins.places.picker.model.PlacePickerOptions;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import id.zelory.compressor.Compressor;
 
 import static java.lang.String.valueOf;
 
@@ -53,6 +63,8 @@ public class NewAdActivity extends AppCompatActivity {
 
     private static final int PLACE_SELECTION_REQUEST_CODE = 56789;
     private static final int RESULT_LOAD_IMAGE = 9999;
+    private static final int MY_PERMISSION_ACCESS_GALLERY = 3928;
+
     Button mapButton;
     Button addressButton;
     TextView addressTextView;
@@ -116,6 +128,12 @@ public class NewAdActivity extends AppCompatActivity {
         addImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (ActivityCompat.checkSelfPermission(NewAdActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+                    ActivityCompat.requestPermissions(NewAdActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSION_ACCESS_GALLERY);
+
+                    return;
+                }
                 Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(galleryIntent, RESULT_LOAD_IMAGE);
             }
@@ -225,6 +243,8 @@ public class NewAdActivity extends AppCompatActivity {
             pointerLongitude = point.longitude();
 
         }else if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && data != null) {
+
+
             Uri SelectedImage = data.getData();
             String[] FilePathColumn = {MediaStore.Images.Media.DATA};
 
@@ -235,12 +255,49 @@ public class NewAdActivity extends AppCompatActivity {
             String picturePath = SelectedCursor.getString(columnIndex);
             SelectedCursor.close();
 
-            addImageButton.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+            File imageFile = new File(picturePath);
+            long originalSize = imageFile.length()/1024;
+            Log.d("jeps", "original: " + valueOf(originalSize));
+/*
+            try {
+                File compressedImageFile = new Compressor(this).compressToFile(imageFile);
+
+                Log.d("jeps", valueOf(compressedSize));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+
+
+*/
+            try {
+                Bitmap compressedImageBitmap = new Compressor(this).compressToBitmap(imageFile);
+                long compressedSize = compressedImageBitmap.getByteCount()/1024;
+                Log.d("jeps", valueOf(compressedSize));
+                addImageButton.setImageBitmap(compressedImageBitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+          //  addImageButton.setImageBitmap(BitmapFactory.decodeFile(picturePath));
 
 
         }
 
     }
 
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == MY_PERMISSION_ACCESS_GALLERY) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(galleryIntent, RESULT_LOAD_IMAGE);
+
+            }
+        }
+    }
 
 }
