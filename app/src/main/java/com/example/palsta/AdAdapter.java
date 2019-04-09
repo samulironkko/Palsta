@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.mapbox.mapboxsdk.geometry.LatLng;
+
 import java.util.ArrayList;
 
 public class AdAdapter extends ArrayAdapter<AdPart> {
@@ -47,6 +49,7 @@ public class AdAdapter extends ArrayAdapter<AdPart> {
             int layoutId = R.layout.ad_list_item;
             convertView = LayoutInflater.from(getContext()).inflate(layoutId, parent, false);
         }
+
 
         //name of product
         TextView name =convertView.findViewById(R.id.productNameText);

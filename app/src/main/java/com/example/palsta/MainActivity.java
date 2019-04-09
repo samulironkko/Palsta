@@ -201,6 +201,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         listView = findViewById(R.id.adList);
+        listView.setEnabled(false);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -460,6 +461,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("asdf", String.valueOf(longitude));
                 mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(
                         latitude, longitude), 10));
+
             }
 
             @Override
@@ -543,13 +545,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void addClusteredGeoJsonSource(@NonNull Style loadedMapStyle) {
 
-// Add a new source from the GeoJSON data and set the 'cluster' option to true.
+        // Add a new source from the GeoJSON data and set the 'cluster' option to true.
         loadedMapStyle.addSource(
-// Point to GeoJSON data. This example visualizes all M1.0+ earthquakes from
-// 12/22/15 to 1/21/16 as logged by USGS' Earthquake hazards program.
                 new GeoJsonSource("ads",
                         geoJSON.toString(),
-                        //  new URL("https://www.mapbox.com/mapbox-gl-js/assets/earthquakes.geojson"),
                         new GeoJsonOptions()
                                 .withCluster(true)
                                 .withClusterMaxZoom(14)
@@ -557,15 +556,14 @@ public class MainActivity extends AppCompatActivity {
                 )
         );
 
-        // Use the earthquakes GeoJSON source to create three layers: One layer for each cluster category.
-// Each point range gets a different fill color.
+        // Each point range gets a different fill color.
         int[][] layers = new int[][] {
                 new int[] {150, ContextCompat.getColor(this, R.color.mapbox_plugins_green)},
                 new int[] {20, ContextCompat.getColor(this, R.color.mapbox_plugins_green)},
                 new int[] {0, ContextCompat.getColor(this, R.color.mapbox_blue)}
         };
 
-//Creating a marker layer for single data points
+        //Creating a marker layer for single data points
         SymbolLayer unclustered = new SymbolLayer("unclustered-points", "ads");
 
         unclustered.setProperties(
@@ -586,7 +584,7 @@ public class MainActivity extends AppCompatActivity {
         loadedMapStyle.addLayer(unclustered);
 
         for (int i = 0; i < layers.length; i++) {
-//Add clusters' circles
+            //Add clusters' circles
             CircleLayer circles = new CircleLayer("cluster-" + i, "ads");
             circles.setProperties(
                     circleColor(layers[i][1]),
@@ -595,7 +593,7 @@ public class MainActivity extends AppCompatActivity {
 
             Expression pointCount = toNumber(get("point_count"));
 
-// Add a filter to the cluster layer that hides the circles based on "point_count"
+            // Add a filter to the cluster layer that hides the circles based on "point_count"
             circles.setFilter(
                     i == 0
                             ? all(has("point_count"),
@@ -608,7 +606,7 @@ public class MainActivity extends AppCompatActivity {
             loadedMapStyle.addLayer(circles);
         }
 
-//Add the count labels
+        //Add the count labels
         SymbolLayer count = new SymbolLayer("count", "ads");
         count.setProperties(
                 textField(Expression.toString(get("point_count"))),
