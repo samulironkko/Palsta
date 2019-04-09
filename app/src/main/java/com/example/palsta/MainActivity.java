@@ -63,6 +63,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.geometry.LatLngBounds;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
@@ -80,8 +81,11 @@ import org.json.JSONObject;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.UUID;
 
@@ -128,10 +132,14 @@ public class MainActivity extends AppCompatActivity {
     GeoPoint geoPoint;
     double geoLatitude;
     double geoLongitude;
+    AdPart current;
 
     ArrayList<AdPart> AdParts = new ArrayList<>();
+    ArrayList<AdPart> tempAdParts = new ArrayList<>();
+    ListIterator<AdPart> iterator;
     double latitude;
     double longitude;
+
 
     ListView listView = null;
 
@@ -157,8 +165,6 @@ public class MainActivity extends AppCompatActivity {
             Log.d("1234", sharedPreferences.getString("UUID", null));
         }
 
-
-
         //if crashes add following line
         FirebaseApp.initializeApp(this);
 
@@ -166,28 +172,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         final FeatureCollection featureCollection = new FeatureCollection();
-
-
-/*
-        point = new Point(38.889, -77.035);
-        feature = new Feature(point);
-        feature.setIdentifier("Ilmoitus1");
-        feature.setProperties(new JSONObject());
-
-        featureCollection.addFeature(feature);
-
-        point = new Point(38.9, -76.0);
-        feature = new Feature(point);
-        feature.setIdentifier("Ilmoitus2");
-        feature.setProperties(new JSONObject());
-
-        featureCollection.addFeature(feature);
-        try {
-            geoJSON = featureCollection.toJSON();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-*/
 
         LinearLayout llBottomSheet = (LinearLayout) findViewById(R.id.bottom_sheet);
 
@@ -200,6 +184,10 @@ public class MainActivity extends AppCompatActivity {
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 if (newState == BottomSheetBehavior.STATE_DRAGGING && !listIsAtTop()) {
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                }else if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                    listView.setEnabled(false);
+                }else if (newState == BottomSheetBehavior.STATE_EXPANDED) {
+                    listView.setEnabled(true);
                 }
             }
 
@@ -237,6 +225,7 @@ public class MainActivity extends AppCompatActivity {
                                 geoPoint = document.getGeoPoint("geo");
                                 geoLatitude = geoPoint.getLatitude();
                                 geoLongitude = geoPoint.getLongitude();
+                                LatLng geoLatLng = new LatLng(geoLatitude, geoLongitude);
                                 point = new Point(geoLatitude, geoLongitude);
                                 feature = new Feature(point);
                                 feature.setIdentifier(id);
@@ -253,14 +242,20 @@ public class MainActivity extends AppCompatActivity {
                                 Log.d("asdf", String.valueOf(geoLatitude));
                                 Log.d("asdf", String.valueOf(geoLongitude));
 
-                                AdPart part = new AdPart(product, address, price, pricedescription, description);
+
+                                AdPart part = new AdPart();
+                                part.setAddress(address);
+                                part.setProduct(product);
+                                part.setDescription(description);
+                                part.setPricedescription(pricedescription);
+                                part.setLatLng(geoLatLng);
+                                part.setPrice(price);
                                 AdParts.add(part);
 
                                 //TextView productTextView = findViewById(productNameText);
                                 //productTextView.setText(product);
 
                                 Log.d("asdf", document.getId() + " => " + document.getData());
-
                             }
                             try {
                                 geoJSON = featureCollection.toJSON();
@@ -268,31 +263,7 @@ public class MainActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
                             QuerySnapshot doc = task.getResult();
-                            mapView.getMapAsync(new OnMapReadyCallback() {
-                                @Override
-                                public void onMapReady(@NonNull MapboxMap map) {
-
-                                    mapboxMap = map;
-
-                                    map.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
-                                        @Override
-                                        public void onStyleLoaded(@NonNull Style style) {
-                                            mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(
-                                                    12.099, -79.045), 3));
-
-                                            addClusteredGeoJsonSource(style);
-                                            style.addImage(
-                                                    "cross-icon-id",
-                                                    BitmapUtils.getBitmapFromDrawable(getResources().getDrawable(R.drawable.baseline_euro_symbol_black_18dp)),
-                                                    true
-                                            );
-                                            getLocation();
-
-                                        }
-                                    });
-
-                                }
-                            });
+                            buildMap();
                             //StringBuilder fields = new StringBuilder("");
 
                     /*
@@ -394,9 +365,6 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == MY_PERMISSION_ACCESS_FINE_LOCATION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                //Permission Granted
-                //Do your work here
-                //Perform operations here only which requires permission
                 getLocation();
             }
         }
@@ -478,6 +446,18 @@ public class MainActivity extends AppCompatActivity {
             public void onLocationChanged(Location location) {
                 longitude = location.getLongitude();
                 latitude = location.getLatitude();
+                LatLng userLatLng = new LatLng(latitude,longitude);
+                iterator = AdParts.listIterator();
+                while (iterator.hasNext()) {
+                    current = iterator.next();
+                    current.setDistance(userLatLng.distanceTo(current.getLatLng()));
+                }
+                Collections.sort(AdParts, new Comparator<AdPart>() {
+                    @Override
+                    public int compare(AdPart o1, AdPart o2) {
+                        return Double.compare(o1.getDistance(), o2.getDistance());
+                    }
+                });
                 Log.d("asdf", String.valueOf(longitude));
                 mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(
                         latitude, longitude), 10));
@@ -521,6 +501,46 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void buildMap() {
+        mapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(@NonNull final MapboxMap map) {
+                mapboxMap = map;
+                mapboxMap.getUiSettings().setTiltGesturesEnabled(false);
+                map.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
+                    @Override
+                    public void onStyleLoaded(@NonNull Style style) {
+                        mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(
+                                12.099, -79.045), 3));
+                        addClusteredGeoJsonSource(style);
+                        style.addImage(
+                                "cross-icon-id",
+                                BitmapUtils.getBitmapFromDrawable(getResources().getDrawable(R.drawable.baseline_person_pin_circle_black_24dp)),
+                                true
+                        );
+                        getLocation();
+                        mapboxMap.addOnCameraMoveListener(new MapboxMap.OnCameraMoveListener() {
+                            @Override
+                            public void onCameraMove() {
+                                tempAdParts.clear();
+                                LatLngBounds bounds = map.getProjection().getVisibleRegion().latLngBounds;
+                                iterator = AdParts.listIterator();
+                                while (iterator.hasNext()) {
+                                    current = iterator.next();
+                                    if (bounds.contains(current.getLatLng())) {
+                                        tempAdParts.add(current);
+                                    }
+                                }
+                                AdAdapter adapter = new AdAdapter(MainActivity.this, tempAdParts);
+                                listView.setAdapter(adapter);
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
+
 
     private void addClusteredGeoJsonSource(@NonNull Style loadedMapStyle) {
 
@@ -528,7 +548,7 @@ public class MainActivity extends AppCompatActivity {
         loadedMapStyle.addSource(
 // Point to GeoJSON data. This example visualizes all M1.0+ earthquakes from
 // 12/22/15 to 1/21/16 as logged by USGS' Earthquake hazards program.
-                new GeoJsonSource("earthquake",
+                new GeoJsonSource("ads",
                         geoJSON.toString(),
                         //  new URL("https://www.mapbox.com/mapbox-gl-js/assets/earthquakes.geojson"),
                         new GeoJsonOptions()
@@ -547,13 +567,13 @@ public class MainActivity extends AppCompatActivity {
         };
 
 //Creating a marker layer for single data points
-        SymbolLayer unclustered = new SymbolLayer("unclustered-points", "earthquake");
+        SymbolLayer unclustered = new SymbolLayer("unclustered-points", "ads");
 
         unclustered.setProperties(
                 iconImage("cross-icon-id"),
                 iconSize(
                         division(
-                                get("mag"), literal(4.0f)
+                                get("mag"), literal(50.0f)
                         )
                 ),
                 iconColor(
@@ -568,7 +588,7 @@ public class MainActivity extends AppCompatActivity {
 
         for (int i = 0; i < layers.length; i++) {
 //Add clusters' circles
-            CircleLayer circles = new CircleLayer("cluster-" + i, "earthquake");
+            CircleLayer circles = new CircleLayer("cluster-" + i, "ads");
             circles.setProperties(
                     circleColor(layers[i][1]),
                     circleRadius(18f)
@@ -590,7 +610,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
 //Add the count labels
-        SymbolLayer count = new SymbolLayer("count", "earthquake");
+        SymbolLayer count = new SymbolLayer("count", "ads");
         count.setProperties(
                 textField(Expression.toString(get("point_count"))),
                 textSize(12f),

@@ -3,11 +3,13 @@ package com.example.palsta;
 import android.Manifest;
 import android.app.ActionBar;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
@@ -79,12 +81,10 @@ public class NewAdActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_ad);
 
-
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         longitude = bundle.getDouble("EXTRA_LONGITUDE");
         latitude = bundle.getDouble("EXTRA_LATITUDE");
-
 
         Mapbox.getInstance(this, "pk.eyJ1Ijoic2FtdWxpcm9ua2tvIiwiYSI6ImNqdHF4Z2ViczBpZmI0ZGxsdDF1eHczZzgifQ.wBTnY_6-AdYQKk7dYqFDlQ");
 
@@ -145,15 +145,12 @@ public class NewAdActivity extends AppCompatActivity {
             }
         });
 
-
     }
 
     /**
      * Set up the PlacePickerOptions and startActivityForResult
      */
     private void publishAdActivity(){
-
-
 
         String product = new String();
         String address = new String();
@@ -166,9 +163,6 @@ public class NewAdActivity extends AppCompatActivity {
 
         EditText edt = (EditText) findViewById(R.id.price_edit_text);
         float price = Float.valueOf(edt.getText().toString());
-
-
-
 
         description = ((EditText)findViewById(R.id.desc_edit_text)).getText().toString();
 
@@ -184,12 +178,18 @@ public class NewAdActivity extends AppCompatActivity {
         Log.d("ass", valueOf(pointerLongitude));
         Log.d("ass", valueOf(pointerLatitude));
 
-        //Location lastLocation = locationEngine.getLastLocation();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String UID = new String(sharedPreferences.getString("UUID", null));
+        Log.d("lol", UID);
+        Log.d("1234", sharedPreferences.getString("UUID", null));
 
+
+        //Location lastLocation = locationEngine.getLastLocation();
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         Map<String, Object> data = new HashMap<>();
+        data.put("UUID", UID);
         data.put("product",product);
         data.put("address",address);
         data.put("price",price);
@@ -282,10 +282,9 @@ public class NewAdActivity extends AppCompatActivity {
 
           //  addImageButton.setImageBitmap(BitmapFactory.decodeFile(picturePath));
 
-
         }
-
     }
+//<<<<<<< Updated upstream
 
 
     @Override
@@ -300,4 +299,6 @@ public class NewAdActivity extends AppCompatActivity {
         }
     }
 
+//=======
+//>>>>>>> Stashed changes
 }
