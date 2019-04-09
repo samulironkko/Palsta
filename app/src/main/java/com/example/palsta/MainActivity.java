@@ -140,11 +140,15 @@ public class MainActivity extends AppCompatActivity {
     double latitude;
     double longitude;
 
+
     ListView listView = null;
 
     public static final String EXTRA_MESSAGE = "com.example.palsta.MESSAGE";
 
     static final int MY_PERMISSION_ACCESS_FINE_LOCATION = 100;
+
+
+
 
 
     @Override
@@ -160,8 +164,6 @@ public class MainActivity extends AppCompatActivity {
         }else{
             Log.d("1234", sharedPreferences.getString("UUID", null));
         }
-
-
 
         //if crashes add following line
         FirebaseApp.initializeApp(this);
@@ -255,7 +257,6 @@ public class MainActivity extends AppCompatActivity {
                                 //productTextView.setText(product);
 
                                 Log.d("asdf", document.getId() + " => " + document.getData());
-
                             }
                             try {
                                 geoJSON = featureCollection.toJSON();

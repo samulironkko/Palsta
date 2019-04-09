@@ -77,6 +77,10 @@ public class AdPart implements Serializable {
         this.product = product;
     }
 
+    public AdPart(){
+
+    }
+
 
     public AdPart(){
 

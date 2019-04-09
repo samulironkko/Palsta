@@ -19,7 +19,8 @@ import java.util.ArrayList;
 public class AdAdapter extends ArrayAdapter<AdPart> {
 
     static final int VIEW_TYPE_AD = 0;
-    static final int VIEW_TYPE_COUNT = 1;
+    static final int VIEW_TYPE_YOURAD = 1;
+    static final int VIEW_TYPE_COUNT = 2;
 
     public AdAdapter(Context context, ArrayList<AdPart> Adverts){
         super(context, 0, Adverts);
@@ -33,10 +34,10 @@ public class AdAdapter extends ArrayAdapter<AdPart> {
 
     @Override
     public int getItemViewType(int position) {
-        //AdPart base = getItem(position);
-        //if(base instanceof AdPart)
-            //return VIEW_TYPE_AD;
-        //else
+        AdPart base = getItem(position);
+        if(base instanceof YourPart)
+            return VIEW_TYPE_YOURAD;
+        else
             return VIEW_TYPE_AD;
     }
 
@@ -46,7 +47,12 @@ public class AdAdapter extends ArrayAdapter<AdPart> {
         AdPart base = getItem(position);
 
         if(convertView == null){
-            int layoutId = R.layout.ad_list_item;
+            int layoutId = 0;
+            if (getItemViewType(position) == VIEW_TYPE_AD){
+                layoutId = R.layout.ad_list_item;
+            }else{
+                layoutId = R.layout.yourad_list_item;
+            }
             convertView = LayoutInflater.from(getContext()).inflate(layoutId, parent, false);
         }
 
