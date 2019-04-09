@@ -140,6 +140,9 @@ public class MainActivity extends AppCompatActivity {
     static final int MY_PERMISSION_ACCESS_FINE_LOCATION = 100;
 
 
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

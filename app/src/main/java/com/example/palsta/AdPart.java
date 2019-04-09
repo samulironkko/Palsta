@@ -55,6 +55,10 @@ public class AdPart implements Serializable {
         this.product = product;
     }
 
+    public AdPart(){
+
+    }
+
 
     public AdPart(String product1, String address1, float price1, String pricedescription1, String description1){
         //photo = photo1;
