@@ -155,8 +155,6 @@ public class MainActivity extends AppCompatActivity {
             Log.d("1234", sharedPreferences.getString("UUID", null));
         }
 
-
-
         //if crashes add following line
         FirebaseApp.initializeApp(this);
 
@@ -164,8 +162,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         final FeatureCollection featureCollection = new FeatureCollection();
-
-
 /*
         point = new Point(38.889, -77.035);
         feature = new Feature(point);
