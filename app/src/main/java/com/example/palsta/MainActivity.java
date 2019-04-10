@@ -60,6 +60,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.mapbox.android.gestures.MoveGestureDetector;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
@@ -203,6 +204,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         listView = findViewById(R.id.adList);
+        listView.setEnabled(false);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -313,6 +315,7 @@ public class MainActivity extends AppCompatActivity {
                                 public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
                                                         long arg3) {
                                     Log.d("gona", arg1.toString());
+                                    mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(tempAdParts.get(arg2).getLatLng(), 12));
                                     if (arg1.findViewById(R.id.descriptionText).getVisibility() == View.GONE) {
                                         arg1.findViewById(R.id.descriptionText).setVisibility(View.VISIBLE);
                                 /*ImageView imageView = (ImageView)arg1.findViewById(R.id.productImage);
@@ -444,23 +447,7 @@ public class MainActivity extends AppCompatActivity {
         LocationListener locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                longitude = location.getLongitude();
-                latitude = location.getLatitude();
-                LatLng userLatLng = new LatLng(latitude,longitude);
-                iterator = AdParts.listIterator();
-                while (iterator.hasNext()) {
-                    current = iterator.next();
-                    current.setDistance(userLatLng.distanceTo(current.getLatLng()));
-                }
-                Collections.sort(AdParts, new Comparator<AdPart>() {
-                    @Override
-                    public int compare(AdPart o1, AdPart o2) {
-                        return Double.compare(o1.getDistance(), o2.getDistance());
-                    }
-                });
-                Log.d("asdf", String.valueOf(longitude));
-                mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(
-                        latitude, longitude), 10));
+                updateGPSCoordinates(location);
             }
 
             @Override
@@ -497,6 +484,7 @@ public class MainActivity extends AppCompatActivity {
 
             return;
         }
+        updateGPSCoordinates(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
         locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, locationListener, looper);
 
     }
@@ -519,20 +507,20 @@ public class MainActivity extends AppCompatActivity {
                                 true
                         );
                         getLocation();
-                        mapboxMap.addOnCameraMoveListener(new MapboxMap.OnCameraMoveListener() {
+                        mapboxMap.addOnMoveListener(new MapboxMap.OnMoveListener() {
                             @Override
-                            public void onCameraMove() {
-                                tempAdParts.clear();
-                                LatLngBounds bounds = map.getProjection().getVisibleRegion().latLngBounds;
-                                iterator = AdParts.listIterator();
-                                while (iterator.hasNext()) {
-                                    current = iterator.next();
-                                    if (bounds.contains(current.getLatLng())) {
-                                        tempAdParts.add(current);
-                                    }
-                                }
-                                AdAdapter adapter = new AdAdapter(MainActivity.this, tempAdParts);
-                                listView.setAdapter(adapter);
+                            public void onMoveBegin(@NonNull MoveGestureDetector detector) {
+
+                            }
+
+                            @Override
+                            public void onMove(@NonNull MoveGestureDetector detector) {
+
+                            }
+
+                            @Override
+                            public void onMoveEnd(@NonNull MoveGestureDetector detector) {
+                                updateTempList();
                             }
                         });
                     }
@@ -544,13 +532,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void addClusteredGeoJsonSource(@NonNull Style loadedMapStyle) {
 
-// Add a new source from the GeoJSON data and set the 'cluster' option to true.
+        // Add a new source from the GeoJSON data and set the 'cluster' option to true.
         loadedMapStyle.addSource(
-// Point to GeoJSON data. This example visualizes all M1.0+ earthquakes from
-// 12/22/15 to 1/21/16 as logged by USGS' Earthquake hazards program.
                 new GeoJsonSource("ads",
                         geoJSON.toString(),
-                        //  new URL("https://www.mapbox.com/mapbox-gl-js/assets/earthquakes.geojson"),
                         new GeoJsonOptions()
                                 .withCluster(true)
                                 .withClusterMaxZoom(14)
@@ -558,15 +543,14 @@ public class MainActivity extends AppCompatActivity {
                 )
         );
 
-        // Use the earthquakes GeoJSON source to create three layers: One layer for each cluster category.
-// Each point range gets a different fill color.
+        // Each point range gets a different fill color.
         int[][] layers = new int[][] {
                 new int[] {150, ContextCompat.getColor(this, R.color.mapbox_plugins_green)},
                 new int[] {20, ContextCompat.getColor(this, R.color.mapbox_plugins_green)},
                 new int[] {0, ContextCompat.getColor(this, R.color.mapbox_blue)}
         };
 
-//Creating a marker layer for single data points
+        //Creating a marker layer for single data points
         SymbolLayer unclustered = new SymbolLayer("unclustered-points", "ads");
 
         unclustered.setProperties(
@@ -587,7 +571,7 @@ public class MainActivity extends AppCompatActivity {
         loadedMapStyle.addLayer(unclustered);
 
         for (int i = 0; i < layers.length; i++) {
-//Add clusters' circles
+            //Add clusters' circles
             CircleLayer circles = new CircleLayer("cluster-" + i, "ads");
             circles.setProperties(
                     circleColor(layers[i][1]),
@@ -596,7 +580,7 @@ public class MainActivity extends AppCompatActivity {
 
             Expression pointCount = toNumber(get("point_count"));
 
-// Add a filter to the cluster layer that hides the circles based on "point_count"
+            // Add a filter to the cluster layer that hides the circles based on "point_count"
             circles.setFilter(
                     i == 0
                             ? all(has("point_count"),
@@ -609,7 +593,7 @@ public class MainActivity extends AppCompatActivity {
             loadedMapStyle.addLayer(circles);
         }
 
-//Add the count labels
+        //Add the count labels
         SymbolLayer count = new SymbolLayer("count", "ads");
         count.setProperties(
                 textField(Expression.toString(get("point_count"))),
@@ -628,6 +612,41 @@ public class MainActivity extends AppCompatActivity {
         }else {
             return  (listView.getChildAt(0).getTop() == 0 && listView.getFirstVisiblePosition() == 0);
         }
+    }
+
+    public void updateGPSCoordinates(Location location) {
+        longitude = location.getLongitude();
+        latitude = location.getLatitude();
+        LatLng userLatLng = new LatLng(latitude,longitude);
+        iterator = AdParts.listIterator();
+        while (iterator.hasNext()) {
+            current = iterator.next();
+            current.setDistance(userLatLng.distanceTo(current.getLatLng()));
+        }
+        Collections.sort(AdParts, new Comparator<AdPart>() {
+            @Override
+            public int compare(AdPart o1, AdPart o2) {
+                return Double.compare(o1.getDistance(), o2.getDistance());
+            }
+        });
+        Log.d("asdf", String.valueOf(longitude));
+        mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(
+                latitude, longitude), 10));
+        updateTempList();
+    }
+
+    public void updateTempList() {
+        tempAdParts.clear();
+        LatLngBounds bounds = mapboxMap.getProjection().getVisibleRegion().latLngBounds;
+        iterator = AdParts.listIterator();
+        while (iterator.hasNext()) {
+            current = iterator.next();
+            if (bounds.contains(current.getLatLng())) {
+                tempAdParts.add(current);
+            }
+        }
+        AdAdapter adapter = new AdAdapter(MainActivity.this, tempAdParts);
+        listView.setAdapter(adapter);
     }
 
 
