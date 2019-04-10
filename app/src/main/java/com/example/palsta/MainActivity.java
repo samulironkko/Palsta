@@ -445,24 +445,7 @@ public class MainActivity extends AppCompatActivity {
         LocationListener locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                longitude = location.getLongitude();
-                latitude = location.getLatitude();
-                LatLng userLatLng = new LatLng(latitude,longitude);
-                iterator = AdParts.listIterator();
-                while (iterator.hasNext()) {
-                    current = iterator.next();
-                    current.setDistance(userLatLng.distanceTo(current.getLatLng()));
-                }
-                Collections.sort(AdParts, new Comparator<AdPart>() {
-                    @Override
-                    public int compare(AdPart o1, AdPart o2) {
-                        return Double.compare(o1.getDistance(), o2.getDistance());
-                    }
-                });
-                Log.d("asdf", String.valueOf(longitude));
-                mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(
-                        latitude, longitude), 10));
-
+                updateGPSCoordinates(location);
             }
 
             @Override
@@ -499,6 +482,7 @@ public class MainActivity extends AppCompatActivity {
 
             return;
         }
+        updateGPSCoordinates(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
         locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, locationListener, looper);
 
     }
@@ -626,6 +610,26 @@ public class MainActivity extends AppCompatActivity {
         }else {
             return  (listView.getChildAt(0).getTop() == 0 && listView.getFirstVisiblePosition() == 0);
         }
+    }
+
+    public void updateGPSCoordinates(Location location) {
+        longitude = location.getLongitude();
+        latitude = location.getLatitude();
+        LatLng userLatLng = new LatLng(latitude,longitude);
+        iterator = AdParts.listIterator();
+        while (iterator.hasNext()) {
+            current = iterator.next();
+            current.setDistance(userLatLng.distanceTo(current.getLatLng()));
+        }
+        Collections.sort(AdParts, new Comparator<AdPart>() {
+            @Override
+            public int compare(AdPart o1, AdPart o2) {
+                return Double.compare(o1.getDistance(), o2.getDistance());
+            }
+        });
+        Log.d("asdf", String.valueOf(longitude));
+        mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(
+                latitude, longitude), 10));
     }
 
 
