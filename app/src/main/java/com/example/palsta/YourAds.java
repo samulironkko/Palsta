@@ -69,7 +69,7 @@ public class YourAds extends AppCompatActivity {
                                 part.setDescription(description);
                                 part.setPricedescription(pricedescription);
                                 part.setPrice(price);
-                                AdParts.add(part);
+                                //AdParts.add(part);
 
                                 Log.d("jolo", document.getId() + " => " + document.getData());
                                 //String location = document.get("location").toString();
