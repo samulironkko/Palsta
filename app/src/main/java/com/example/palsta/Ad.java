@@ -3,7 +3,6 @@ package com.example.palsta;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 
 public abstract class Ad {
-
     //private String photo = new String();
     private String address = new String();
     private  String description = new String();
@@ -75,5 +74,6 @@ public abstract class Ad {
     public Ad(){
 
     }
+
 
 }
