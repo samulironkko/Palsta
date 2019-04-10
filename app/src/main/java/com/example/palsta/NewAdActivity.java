@@ -142,6 +142,7 @@ public class NewAdActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 publishAdActivity();
+                finish();
             }
         });
 

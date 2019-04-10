@@ -307,8 +307,8 @@ public class MainActivity extends AppCompatActivity {
                             //price.setText(fields.toString());
 
 
-                            AdAdapter adapter = new AdAdapter(MainActivity.this, AdParts);
-                            listView.setAdapter(adapter);
+                          //  AdAdapter adapter = new AdAdapter(MainActivity.this, AdParts);
+                          //  listView.setAdapter(adapter);
                             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
                                 @Override
@@ -495,7 +495,7 @@ public class MainActivity extends AppCompatActivity {
             public void onMapReady(@NonNull final MapboxMap map) {
                 mapboxMap = map;
                 mapboxMap.getUiSettings().setTiltGesturesEnabled(false);
-                map.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
+                map.setStyle(Style.LIGHT, new Style.OnStyleLoaded() {
                     @Override
                     public void onStyleLoaded(@NonNull Style style) {
                         mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(
