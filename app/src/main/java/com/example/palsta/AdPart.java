@@ -82,7 +82,7 @@ public class AdPart implements Serializable {
     }
 
 
-    public AdPart(){
+    //public AdPart(){
 
-    }
+    //}
 }
