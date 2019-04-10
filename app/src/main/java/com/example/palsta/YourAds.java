@@ -40,7 +40,7 @@ public class YourAds extends AppCompatActivity {
         setContentView(R.layout.activity_your_ads);
 
         listView = findViewById(R.id.adList123);
-        AdAdapter adAdapter = new AdAdapter(this, YourAdParts);
+        final AdAdapter adAdapter = new AdAdapter(this, YourAdParts);
         listView.setAdapter(adAdapter);
 
 
@@ -64,15 +64,16 @@ public class YourAds extends AppCompatActivity {
                                 float price = document.getLong("price").floatValue();
                                 String pricedescription = document.get("pricedescription").toString();
                                 String product = document.get("product").toString();
-                                String id = document.getId();
+                                //String id = document.getId();
 
-                                AdPart part = new AdPart();
+                                YourPart part = new YourPart();
                                 part.setAddress(address);
                                 part.setProduct(product);
                                 part.setDescription(description);
                                 part.setPricedescription(pricedescription);
                                 part.setPrice(price);
-                                //AdParts.add(part);
+                                YourAdParts.add(part);
+                                adAdapter.notifyDataSetChanged();
 
                                 Log.d("jolo", document.getId() + " => " + document.getData());
                                 //String location = document.get("location").toString();
