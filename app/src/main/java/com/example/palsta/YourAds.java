@@ -1,6 +1,8 @@
 package com.example.palsta;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -44,8 +46,9 @@ public class YourAds extends AppCompatActivity {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db = FirebaseFirestore.getInstance();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        Query ad = db.collection("ad").whereEqualTo("UUID", "5bfbd2ef-6c61-4511-bdf5-5337e5ace31d");
+        Query ad = db.collection("ad").whereEqualTo("UUID", sharedPreferences.getString("UUID", null));
         //final CollectionReference ad = db.collection("ad");
         //ad.get().addOnCompleteListener(new OnCompleteListener <DocumentSnapshot> () {
         //db.collection("ad")
