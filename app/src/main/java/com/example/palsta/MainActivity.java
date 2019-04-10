@@ -60,6 +60,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.mapbox.android.gestures.MoveGestureDetector;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
@@ -314,6 +315,7 @@ public class MainActivity extends AppCompatActivity {
                                 public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
                                                         long arg3) {
                                     Log.d("gona", arg1.toString());
+                                    mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(tempAdParts.get(arg2).getLatLng(), 12));
                                     if (arg1.findViewById(R.id.descriptionText).getVisibility() == View.GONE) {
                                         arg1.findViewById(R.id.descriptionText).setVisibility(View.VISIBLE);
                                 /*ImageView imageView = (ImageView)arg1.findViewById(R.id.productImage);
@@ -505,20 +507,20 @@ public class MainActivity extends AppCompatActivity {
                                 true
                         );
                         getLocation();
-                        mapboxMap.addOnCameraMoveListener(new MapboxMap.OnCameraMoveListener() {
+                        mapboxMap.addOnMoveListener(new MapboxMap.OnMoveListener() {
                             @Override
-                            public void onCameraMove() {
-                                tempAdParts.clear();
-                                LatLngBounds bounds = map.getProjection().getVisibleRegion().latLngBounds;
-                                iterator = AdParts.listIterator();
-                                while (iterator.hasNext()) {
-                                    current = iterator.next();
-                                    if (bounds.contains(current.getLatLng())) {
-                                        tempAdParts.add(current);
-                                    }
-                                }
-                                AdAdapter adapter = new AdAdapter(MainActivity.this, tempAdParts);
-                                listView.setAdapter(adapter);
+                            public void onMoveBegin(@NonNull MoveGestureDetector detector) {
+
+                            }
+
+                            @Override
+                            public void onMove(@NonNull MoveGestureDetector detector) {
+
+                            }
+
+                            @Override
+                            public void onMoveEnd(@NonNull MoveGestureDetector detector) {
+                                updateTempList();
                             }
                         });
                     }
@@ -630,6 +632,21 @@ public class MainActivity extends AppCompatActivity {
         Log.d("asdf", String.valueOf(longitude));
         mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(
                 latitude, longitude), 10));
+        updateTempList();
+    }
+
+    public void updateTempList() {
+        tempAdParts.clear();
+        LatLngBounds bounds = mapboxMap.getProjection().getVisibleRegion().latLngBounds;
+        iterator = AdParts.listIterator();
+        while (iterator.hasNext()) {
+            current = iterator.next();
+            if (bounds.contains(current.getLatLng())) {
+                tempAdParts.add(current);
+            }
+        }
+        AdAdapter adapter = new AdAdapter(MainActivity.this, tempAdParts);
+        listView.setAdapter(adapter);
     }
 
 
