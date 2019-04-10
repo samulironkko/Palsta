@@ -133,11 +133,11 @@ public class MainActivity extends AppCompatActivity {
     GeoPoint geoPoint;
     double geoLatitude;
     double geoLongitude;
-    AdPart current;
+    Ad current;
 
-    ArrayList<AdPart> AdParts = new ArrayList<>();
-    ArrayList<AdPart> tempAdParts = new ArrayList<>();
-    ListIterator<AdPart> iterator;
+    ArrayList<Ad> AdParts = new ArrayList<>();
+    ArrayList<Ad> tempAdParts = new ArrayList<>();
+    ListIterator<Ad> iterator;
     double latitude;
     double longitude;
 
@@ -623,9 +623,9 @@ public class MainActivity extends AppCompatActivity {
             current = iterator.next();
             current.setDistance(userLatLng.distanceTo(current.getLatLng()));
         }
-        Collections.sort(AdParts, new Comparator<AdPart>() {
+        Collections.sort(AdParts, new Comparator<Ad>() {
             @Override
-            public int compare(AdPart o1, AdPart o2) {
+            public int compare(Ad o1, Ad o2) {
                 return Double.compare(o1.getDistance(), o2.getDistance());
             }
         });
