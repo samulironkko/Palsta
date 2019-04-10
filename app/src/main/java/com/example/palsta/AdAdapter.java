@@ -14,13 +14,13 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class AdAdapter extends ArrayAdapter<AdPart> {
+public class AdAdapter extends ArrayAdapter<Ad> {
 
     static final int VIEW_TYPE_AD = 0;
     static final int VIEW_TYPE_YOURAD = 1;
     static final int VIEW_TYPE_COUNT = 2;
 
-    public AdAdapter(Context context, ArrayList<AdPart> Adverts){
+    public AdAdapter(Context context, ArrayList<Ad> Adverts){
         super(context, 0, Adverts);
     }
     
@@ -32,7 +32,7 @@ public class AdAdapter extends ArrayAdapter<AdPart> {
 
     @Override
     public int getItemViewType(int position) {
-        AdPart base = getItem(position);
+        Ad base = getItem(position);
         if(base instanceof YourPart)
             return VIEW_TYPE_YOURAD;
         else
@@ -42,7 +42,7 @@ public class AdAdapter extends ArrayAdapter<AdPart> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent){
-        AdPart base = getItem(position);
+        Ad base = getItem(position);
 
         if(convertView == null){
             int layoutId = 0;

@@ -1,5 +1,5 @@
 package com.example.palsta;
 
-public class YourPart extends AdPart {
+public class YourPart extends Ad {
 
 }

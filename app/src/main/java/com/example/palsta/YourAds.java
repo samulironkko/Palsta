@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class YourAds extends AppCompatActivity {
 
-    ArrayList<AdPart> YourAdParts = new ArrayList<>();
+    ArrayList<Ad> YourAdParts = new ArrayList<>();
     ListView listView = null;
 
     @Override
