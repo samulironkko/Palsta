@@ -205,6 +205,35 @@ public class MainActivity extends AppCompatActivity {
 
         listView = findViewById(R.id.adList);
         listView.setEnabled(false);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+                                    long arg3) {
+                Log.d("gona", arg1.toString());
+                mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(tempAdParts.get(arg2).getLatLng(), 12));
+                if (arg1.findViewById(R.id.descriptionText).getVisibility() == View.GONE) {
+                    arg1.findViewById(R.id.descriptionText).setVisibility(View.VISIBLE);
+                                /*ImageView imageView = (ImageView)arg1.findViewById(R.id.productImage);
+                                  ViewGroup.LayoutParams params = (ViewGroup.LayoutParams)imageView.getLayoutParams();
+                                params.width = -1;
+                                ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams)imageView.getLayoutParams();
+                                marginLayoutParams.leftMargin = 0;
+                                marginLayoutParams.topMargin = 0;
+                                marginLayoutParams.bottomMargin = 0;
+                                ConstraintLayout.LayoutParams constraintLayout = (ConstraintLayout.LayoutParams) findViewById(R.id.con2).getLayoutParams();
+                                constraintLayout.topToBottom = R.id.productImage;
+                                arg1.findViewById(R.id.con2).requestLayout();*/
+                } else {
+                    arg1.findViewById(R.id.descriptionText).setVisibility(View.GONE);
+                }
+                //Log.d("asdf","Items " +  AdParts.get(arg2).getStr() );
+                //Intent intent = new Intent(getBaseContext(), SingleAd.class);
+                //intent.putExtra(EXTRA_MESSAGE, AdParts.get(arg2));
+                //startActivity(intent);
+            }
+
+        });
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -309,35 +338,7 @@ public class MainActivity extends AppCompatActivity {
 
                           //  AdAdapter adapter = new AdAdapter(MainActivity.this, AdParts);
                           //  listView.setAdapter(adapter);
-                            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-                                @Override
-                                public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-                                                        long arg3) {
-                                    Log.d("gona", arg1.toString());
-                                    mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(tempAdParts.get(arg2).getLatLng(), 12));
-                                    if (arg1.findViewById(R.id.descriptionText).getVisibility() == View.GONE) {
-                                        arg1.findViewById(R.id.descriptionText).setVisibility(View.VISIBLE);
-                                /*ImageView imageView = (ImageView)arg1.findViewById(R.id.productImage);
-                                  ViewGroup.LayoutParams params = (ViewGroup.LayoutParams)imageView.getLayoutParams();
-                                params.width = -1;
-                                ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams)imageView.getLayoutParams();
-                                marginLayoutParams.leftMargin = 0;
-                                marginLayoutParams.topMargin = 0;
-                                marginLayoutParams.bottomMargin = 0;
-                                ConstraintLayout.LayoutParams constraintLayout = (ConstraintLayout.LayoutParams) findViewById(R.id.con2).getLayoutParams();
-                                constraintLayout.topToBottom = R.id.productImage;
-                                arg1.findViewById(R.id.con2).requestLayout();*/
-                                    } else {
-                                        arg1.findViewById(R.id.descriptionText).setVisibility(View.GONE);
-                                    }
-                                    //Log.d("asdf","Items " +  AdParts.get(arg2).getStr() );
-                                    //Intent intent = new Intent(getBaseContext(), SingleAd.class);
-                                    //intent.putExtra(EXTRA_MESSAGE, AdParts.get(arg2));
-                                    //startActivity(intent);
-                                }
-
-                            });
                         }
 
                     }
