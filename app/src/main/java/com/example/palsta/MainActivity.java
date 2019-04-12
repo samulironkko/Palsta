@@ -497,6 +497,7 @@ public class MainActivity extends AppCompatActivity {
             singleBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             return;
         }else if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+            listView.smoothScrollToPosition(0);
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             return;
         }
