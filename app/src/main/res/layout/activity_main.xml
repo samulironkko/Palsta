@@ -31,4 +31,5 @@
 -->
     </android.support.constraint.ConstraintLayout>
     <include layout="@layout/bottom_sheet" />
+    <include layout="@layout/single_ad_bottom_sheet"/>
 </android.support.design.widget.CoordinatorLayout>

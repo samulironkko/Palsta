@@ -129,11 +129,14 @@ public class MainActivity extends AppCompatActivity {
     private MapboxMap mapboxMap;
     JSONObject geoJSON;
     Feature feature;
+    FeatureCollection featureCollection;
     Point point;
     GeoPoint geoPoint;
     double geoLatitude;
     double geoLongitude;
     Ad current;
+    LatLng previousLatLng;
+    int disableListUpdate;
 
     ArrayList<Ad> AdParts = new ArrayList<>();
     ArrayList<Ad> tempAdParts = new ArrayList<>();
@@ -172,12 +175,13 @@ public class MainActivity extends AppCompatActivity {
         Mapbox.getInstance(this, "pk.eyJ1Ijoic2FtdWxpcm9ua2tvIiwiYSI6ImNqdHF4Z2ViczBpZmI0ZGxsdDF1eHczZzgifQ.wBTnY_6-AdYQKk7dYqFDlQ");
         setContentView(R.layout.activity_main);
 
-        final FeatureCollection featureCollection = new FeatureCollection();
+        featureCollection = new FeatureCollection();
 
         LinearLayout llBottomSheet = (LinearLayout) findViewById(R.id.bottom_sheet);
+        ConstraintLayout conBottomSheet = (ConstraintLayout) findViewById(R.id.single_ad_bottom_sheet);
 
         final BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(llBottomSheet);
-        bottomSheetBehavior.setHideable(false);
+        final BottomSheetBehavior singleBottomSheetBehavior = BottomSheetBehavior.from(conBottomSheet);
 
         // set callback for changes
         bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
@@ -198,6 +202,22 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        singleBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View view, int newState) {
+                if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                    mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(previousLatLng, 10));
+                    disableListUpdate = 0;
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View view, float v) {
+
+            }
+        });
+
         mapView = findViewById(R.id.mapView);
 
         mapView.onCreate(savedInstanceState);
@@ -211,9 +231,34 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
                                     long arg3) {
                 Log.d("gona", arg1.toString());
+                disableListUpdate = 1;
+
+                //name of product
+                TextView name = findViewById(R.id.bottom_productNameText);
+                name.setText(tempAdParts.get(arg2).getProduct());
+
+                //price
+                TextView price = findViewById(R.id.bottom_priceText);
+                price.setText(tempAdParts.get(arg2).getPrice() + "€/" + tempAdParts.get(arg2).getPricedescription());
+
+                //address
+                TextView address = findViewById(R.id.bottom_locationText);
+                address.setText(tempAdParts.get(arg2).getAddress());
+
+                //description
+                TextView description = findViewById(R.id.bottom_descriptionText);
+                description.setText(tempAdParts.get(arg2).getDescription());
+
+                //distance
+                TextView distance = findViewById(R.id.bottom_distanceText);
+                distance.setText(String.format("%.1f", tempAdParts.get(arg2).getDistance()/1000) + "km");
+
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                singleBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                previousLatLng = mapboxMap.getCameraPosition().target;
                 mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(tempAdParts.get(arg2).getLatLng(), 12));
-                if (arg1.findViewById(R.id.descriptionText).getVisibility() == View.GONE) {
-                    arg1.findViewById(R.id.descriptionText).setVisibility(View.VISIBLE);
+               // if (arg1.findViewById(R.id.descriptionText).getVisibility() == View.GONE) {
+                 //   arg1.findViewById(R.id.descriptionText).setVisibility(View.VISIBLE);
                                 /*ImageView imageView = (ImageView)arg1.findViewById(R.id.productImage);
                                   ViewGroup.LayoutParams params = (ViewGroup.LayoutParams)imageView.getLayoutParams();
                                 params.width = -1;
@@ -224,9 +269,9 @@ public class MainActivity extends AppCompatActivity {
                                 ConstraintLayout.LayoutParams constraintLayout = (ConstraintLayout.LayoutParams) findViewById(R.id.con2).getLayoutParams();
                                 constraintLayout.topToBottom = R.id.productImage;
                                 arg1.findViewById(R.id.con2).requestLayout();*/
-                } else {
-                    arg1.findViewById(R.id.descriptionText).setVisibility(View.GONE);
-                }
+               // } else {
+                //    arg1.findViewById(R.id.descriptionText).setVisibility(View.GONE);
+               // }
                 //Log.d("asdf","Items " +  AdParts.get(arg2).getStr() );
                 //Intent intent = new Intent(getBaseContext(), SingleAd.class);
                 //intent.putExtra(EXTRA_MESSAGE, AdParts.get(arg2));
@@ -234,7 +279,6 @@ public class MainActivity extends AppCompatActivity {
             }
 
         });
-
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db = FirebaseFirestore.getInstance();
 
@@ -336,8 +380,8 @@ public class MainActivity extends AppCompatActivity {
                             //price.setText(fields.toString());
 
 
-                          //  AdAdapter adapter = new AdAdapter(MainActivity.this, AdParts);
-                          //  listView.setAdapter(adapter);
+                            //  AdAdapter adapter = new AdAdapter(MainActivity.this, AdParts);
+                            //  listView.setAdapter(adapter);
 
                         }
 
@@ -348,6 +392,8 @@ public class MainActivity extends AppCompatActivity {
                     public void onFailure(@NonNull Exception e) {
                     }
                 });
+
+
 
 /*
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -485,7 +531,12 @@ public class MainActivity extends AppCompatActivity {
 
             return;
         }
-        updateGPSCoordinates(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
+        try {
+            updateGPSCoordinates(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+
         locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, locationListener, looper);
 
     }
@@ -501,7 +552,9 @@ public class MainActivity extends AppCompatActivity {
                     public void onStyleLoaded(@NonNull Style style) {
                         mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(
                                 12.099, -79.045), 3));
-                        addClusteredGeoJsonSource(style);
+                        if (mapboxMap.getStyle().getSource("ads") == null) {
+                            addClusteredGeoJsonSource(style);
+                        }
                         style.addImage(
                                 "cross-icon-id",
                                 BitmapUtils.getBitmapFromDrawable(getResources().getDrawable(R.drawable.baseline_person_pin_circle_black_24dp)),
@@ -534,6 +587,7 @@ public class MainActivity extends AppCompatActivity {
     private void addClusteredGeoJsonSource(@NonNull Style loadedMapStyle) {
 
         // Add a new source from the GeoJSON data and set the 'cluster' option to true.
+
         loadedMapStyle.addSource(
                 new GeoJsonSource("ads",
                         geoJSON.toString(),
@@ -637,19 +691,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void updateTempList() {
-        tempAdParts.clear();
-        LatLngBounds bounds = mapboxMap.getProjection().getVisibleRegion().latLngBounds;
-        iterator = AdParts.listIterator();
-        while (iterator.hasNext()) {
-            current = iterator.next();
-            if (bounds.contains(current.getLatLng())) {
-                tempAdParts.add(current);
+        if (disableListUpdate == 0) {
+            tempAdParts.clear();
+            LatLngBounds bounds = mapboxMap.getProjection().getVisibleRegion().latLngBounds;
+            iterator = AdParts.listIterator();
+            while (iterator.hasNext()) {
+                current = iterator.next();
+                if (bounds.contains(current.getLatLng())) {
+                    tempAdParts.add(current);
+                }
             }
+            AdAdapter adapter = new AdAdapter(MainActivity.this, tempAdParts);
+            listView.setAdapter(adapter);
         }
-        AdAdapter adapter = new AdAdapter(MainActivity.this, tempAdParts);
-        listView.setAdapter(adapter);
     }
-
-
 
 }
