@@ -98,6 +98,7 @@ import static com.example.palsta.R.id.productImage;
 import timber.log.Timber;
 
 import static com.example.palsta.R.id.productNameText;
+import static com.example.palsta.R.id.single_ad_bottom_sheet;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.all;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.division;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.exponential;
@@ -144,6 +145,9 @@ public class MainActivity extends AppCompatActivity {
     double latitude;
     double longitude;
 
+    BottomSheetBehavior bottomSheetBehavior;
+    BottomSheetBehavior singleBottomSheetBehavior;
+
 
     ListView listView = null;
 
@@ -180,8 +184,8 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout llBottomSheet = (LinearLayout) findViewById(R.id.bottom_sheet);
         ConstraintLayout conBottomSheet = (ConstraintLayout) findViewById(R.id.single_ad_bottom_sheet);
 
-        final BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(llBottomSheet);
-        final BottomSheetBehavior singleBottomSheetBehavior = BottomSheetBehavior.from(conBottomSheet);
+        bottomSheetBehavior = BottomSheetBehavior.from(llBottomSheet);
+        singleBottomSheetBehavior = BottomSheetBehavior.from(conBottomSheet);
 
         // set callback for changes
         bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
@@ -485,6 +489,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         mapView.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (singleBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+            singleBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            return;
+        }else if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            return;
+        }
+
+        super.onBackPressed();
     }
 
     public void getLocation() {
