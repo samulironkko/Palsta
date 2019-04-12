@@ -67,6 +67,8 @@ public class NewAdActivity extends AppCompatActivity {
     private static final int RESULT_LOAD_IMAGE = 9999;
     private static final int MY_PERMISSION_ACCESS_GALLERY = 3928;
 
+
+
     Button mapButton;
     Button addressButton;
     TextView addressTextView;
@@ -232,7 +234,8 @@ public class NewAdActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) { super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == PLACE_SELECTION_REQUEST_CODE && resultCode == RESULT_OK){
+
+    if (requestCode == PLACE_SELECTION_REQUEST_CODE && resultCode == RESULT_OK){
 
             // Retrieve the information from the selected location's CarmenFeature
 
@@ -267,19 +270,22 @@ public class NewAdActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-
-
-
 */
             try {
                 Bitmap compressedImageBitmap = new Compressor(this).compressToBitmap(imageFile);
                 long compressedSize = compressedImageBitmap.getByteCount()/1024;
                 Log.d("jeps", valueOf(compressedSize));
                 addImageButton.setImageBitmap(compressedImageBitmap);
+
+
+
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+            //compressedImageBitmap=image to store
+
 
           //  addImageButton.setImageBitmap(BitmapFactory.decodeFile(picturePath));
 

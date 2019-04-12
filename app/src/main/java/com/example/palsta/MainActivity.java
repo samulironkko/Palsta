@@ -485,7 +485,7 @@ public class MainActivity extends AppCompatActivity {
 
             return;
         }
-        updateGPSCoordinates(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
+       // updateGPSCoordinates(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
         locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, locationListener, looper);
 
     }

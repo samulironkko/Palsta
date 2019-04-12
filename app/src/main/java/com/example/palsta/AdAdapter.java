@@ -10,9 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -56,6 +58,16 @@ public class AdAdapter extends ArrayAdapter<Ad> {
             convertView = LayoutInflater.from(getContext()).inflate(layoutId, parent, false);
         }
 
+        //picture
+
+        /*
+        String imageUri = "https://i.imgur.com/tGbaZCY.jpg";
+        ImageView ivBasicImage = (ImageView) findViewById(R.id.productImage);
+        Picasso.with(context).load(imageUri).into(ivBasicImage);
+*/
+        ImageView image = convertView.findViewById(R.id.productImage);
+        Picasso.get().load("https://firebasestorage.googleapis.com/v0/b/palsta-b6497.appspot.com/o/puhtaasti_tomaatti.jpg?alt=media&token=8d141497-ae6a-4ce4-80e9-9a4b1d3e94c6")
+                .into(image);
 
         //name of product
         TextView name =convertView.findViewById(R.id.productNameText);
