@@ -61,6 +61,9 @@ import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mapbox.android.gestures.MoveGestureDetector;
+import com.mapbox.geojson.BoundingBox;
+import com.mapbox.geojson.GeoJson;
+import com.mapbox.geojson.Geometry;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
@@ -102,6 +105,7 @@ import static com.example.palsta.R.id.single_ad_bottom_sheet;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.all;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.division;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.exponential;
+import static com.mapbox.mapboxsdk.style.expressions.Expression.geometryType;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.get;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.gt;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.gte;
@@ -179,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
         Mapbox.getInstance(this, "pk.eyJ1Ijoic2FtdWxpcm9ua2tvIiwiYSI6ImNqdHF4Z2ViczBpZmI0ZGxsdDF1eHczZzgifQ.wBTnY_6-AdYQKk7dYqFDlQ");
         setContentView(R.layout.activity_main);
 
-        featureCollection = new FeatureCollection();
+
 
         LinearLayout llBottomSheet = (LinearLayout) findViewById(R.id.bottom_sheet);
         ConstraintLayout conBottomSheet = (ConstraintLayout) findViewById(R.id.single_ad_bottom_sheet);
@@ -260,7 +264,7 @@ public class MainActivity extends AppCompatActivity {
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 singleBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 previousLatLng = mapboxMap.getCameraPosition().target;
-                mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(tempAdParts.get(arg2).getLatLng(), 12));
+                mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(tempAdParts.get(arg2).getLatLng().getLatitude() - 0.01, tempAdParts.get(arg2).getLatLng().getLongitude()), 12));
                // if (arg1.findViewById(R.id.descriptionText).getVisibility() == View.GONE) {
                  //   arg1.findViewById(R.id.descriptionText).setVisibility(View.VISIBLE);
                                 /*ImageView imageView = (ImageView)arg1.findViewById(R.id.productImage);
@@ -283,120 +287,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
         });
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db = FirebaseFirestore.getInstance();
-
-        final CollectionReference ad = db.collection("ad");
-        //ad.get().addOnCompleteListener(new OnCompleteListener < DocumentSnapshot > () {
-        db.collection("ad")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                String address = document.get("address").toString();
-                                String description = document.get("description").toString();
-                                float price = document.getLong("price").floatValue();
-                                String pricedescription = document.get("pricedescription").toString();
-                                String product = document.get("product").toString();
-                                String id = document.getId();
-                                geoPoint = document.getGeoPoint("geo");
-                                geoLatitude = geoPoint.getLatitude();
-                                geoLongitude = geoPoint.getLongitude();
-                                LatLng geoLatLng = new LatLng(geoLatitude, geoLongitude);
-                                point = new Point(geoLatitude, geoLongitude);
-                                feature = new Feature(point);
-                                feature.setIdentifier(id);
-                                feature.setProperties(new JSONObject());
-
-                                featureCollection.addFeature(feature);
-
-                                //String location = document.get("location").toString();
-                                Log.d("asdf", product);
-                                Log.d("asdf", address);
-                                Log.d("asdf", String.valueOf(price));
-                                Log.d("asdf", pricedescription);
-                                Log.d("asdf", description);
-                                Log.d("asdf", String.valueOf(geoLatitude));
-                                Log.d("asdf", String.valueOf(geoLongitude));
-
-
-                                AdPart part = new AdPart();
-                                part.setAddress(address);
-                                part.setProduct(product);
-                                part.setDescription(description);
-                                part.setPricedescription(pricedescription);
-                                part.setLatLng(geoLatLng);
-                                part.setPrice(price);
-                                AdParts.add(part);
-
-                                //TextView productTextView = findViewById(productNameText);
-                                //productTextView.setText(product);
-
-                                Log.d("asdf", document.getId() + " => " + document.getData());
-                            }
-                            try {
-                                geoJSON = featureCollection.toJSON();
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                            QuerySnapshot doc = task.getResult();
-                            buildMap();
-                            //StringBuilder fields = new StringBuilder("");
-
-                    /*
-                    add new table
-
-                    Map<String, Object> data1 = new HashMap<>();
-                    data1.put("product", "Kurkku");
-                    data1.put("address", "Jousimiehentie 2");
-                    data1.put("price", 2);
-                    data1.put("pricedescription", "kg");
-                    data1.put("description", "kasvihuoneessa kasvatettuja kurkkuja");
-                    ad.document("Ilmoitus5").set(data1);
-
-                    */
-
-                            //TextView productName = findViewById(R.id.productNameText);
-                            //TextView addressField = findViewById(R.id.locationText);
-
-
-/*
-                    productName.append(product);
-                    addressField.append(address);
-/*
-                    Log.d("asdf", product);
-                    Log.d("asdf", address);
-                    Log.d("asdf", String.valueOf(price));
-                    Log.d("asdf", pricedescription);
-                    Log.d("asdf", description);
-                    Log.d("asdf", location);
-*/
-                            //fields.append(product + "\n");
-                            //fields.append(price).append("€/").append(pricedescription + "\n");
-                            //fields.append(address);
-
-                            //sijainti
-                            //TextView price = findViewById(R.id.priceText);
-
-                            //productName.setText(fields.toString());
-                            //price.setText(fields.toString());
-
-
-                            //  AdAdapter adapter = new AdAdapter(MainActivity.this, AdParts);
-                            //  listView.setAdapter(adapter);
-
-                        }
-
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                    }
-                });
-
+       // updateFromDb();
 
 
 /*
@@ -453,6 +344,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         mapView.onResume();
+        updateFromDb();
     }
 
     @Override
@@ -722,6 +614,126 @@ public class MainActivity extends AppCompatActivity {
             AdAdapter adapter = new AdAdapter(MainActivity.this, tempAdParts);
             listView.setAdapter(adapter);
         }
+    }
+
+    public void updateFromDb() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db = FirebaseFirestore.getInstance();
+
+        featureCollection = new FeatureCollection();
+
+        final CollectionReference ad = db.collection("ad");
+        //ad.get().addOnCompleteListener(new OnCompleteListener < DocumentSnapshot > () {
+        db.collection("ad")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            AdParts.clear();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                String address = document.get("address").toString();
+                                String description = document.get("description").toString();
+                                float price = document.getLong("price").floatValue();
+                                String pricedescription = document.get("pricedescription").toString();
+                                String product = document.get("product").toString();
+                                String id = document.getId();
+                                geoPoint = document.getGeoPoint("geo");
+                                geoLatitude = geoPoint.getLatitude();
+                                geoLongitude = geoPoint.getLongitude();
+                                LatLng geoLatLng = new LatLng(geoLatitude, geoLongitude);
+                                point = new Point(geoLatitude, geoLongitude);
+                                feature = new Feature(point);
+                                feature.setIdentifier(id);
+                                feature.setProperties(new JSONObject());
+
+                                featureCollection.addFeature(feature);
+
+                                //String location = document.get("location").toString();
+                                Log.d("asdf", product);
+                                Log.d("asdf", address);
+                                Log.d("asdf", String.valueOf(price));
+                                Log.d("asdf", pricedescription);
+                                Log.d("asdf", description);
+                                Log.d("asdf", String.valueOf(geoLatitude));
+                                Log.d("asdf", String.valueOf(geoLongitude));
+
+
+                                AdPart part = new AdPart();
+                                part.setAddress(address);
+                                part.setProduct(product);
+                                part.setDescription(description);
+                                part.setPricedescription(pricedescription);
+                                part.setLatLng(geoLatLng);
+                                part.setPrice(price);
+                                AdParts.add(part);
+
+                                //TextView productTextView = findViewById(productNameText);
+                                //productTextView.setText(product);
+
+                                Log.d("asdf", document.getId() + " => " + document.getData());
+                            }
+                            try {
+                                geoJSON = featureCollection.toJSON();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            //QuerySnapshot doc = task.getResult();
+                            buildMap();
+                            //StringBuilder fields = new StringBuilder("");
+
+                    /*
+                    add new table
+
+                    Map<String, Object> data1 = new HashMap<>();
+                    data1.put("product", "Kurkku");
+                    data1.put("address", "Jousimiehentie 2");
+                    data1.put("price", 2);
+                    data1.put("pricedescription", "kg");
+                    data1.put("description", "kasvihuoneessa kasvatettuja kurkkuja");
+                    ad.document("Ilmoitus5").set(data1);
+
+                    */
+
+                            //TextView productName = findViewById(R.id.productNameText);
+                            //TextView addressField = findViewById(R.id.locationText);
+
+
+/*
+                    productName.append(product);
+                    addressField.append(address);
+/*
+                    Log.d("asdf", product);
+                    Log.d("asdf", address);
+                    Log.d("asdf", String.valueOf(price));
+                    Log.d("asdf", pricedescription);
+                    Log.d("asdf", description);
+                    Log.d("asdf", location);
+*/
+                            //fields.append(product + "\n");
+                            //fields.append(price).append("€/").append(pricedescription + "\n");
+                            //fields.append(address);
+
+                            //sijainti
+                            //TextView price = findViewById(R.id.priceText);
+
+                            //productName.setText(fields.toString());
+                            //price.setText(fields.toString());
+
+
+                            //  AdAdapter adapter = new AdAdapter(MainActivity.this, AdParts);
+                            //  listView.setAdapter(adapter);
+
+                        }
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                    }
+                });
+
     }
 
 }
