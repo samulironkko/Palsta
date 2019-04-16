@@ -702,6 +702,7 @@ public class MainActivity extends AppCompatActivity {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 String address = document.get("address").toString();
                                 String description = document.get("description").toString();
+                                String adid = document.get("ADID").toString();
                                 float price = document.getLong("price").floatValue();
                                 String pricedescription = document.get("pricedescription").toString();
                                 String product = document.get("product").toString();
@@ -725,6 +726,7 @@ public class MainActivity extends AppCompatActivity {
                                 Log.d("asdf", description);
                                 Log.d("asdf", String.valueOf(geoLatitude));
                                 Log.d("asdf", String.valueOf(geoLongitude));
+                                Log.d("asdf", String.valueOf(adid));
 
 
                                 AdPart part = new AdPart();

@@ -68,7 +68,7 @@ public class YourAds extends AppCompatActivity {
                                 float price = document.getLong("price").floatValue();
                                 String pricedescription = document.get("pricedescription").toString();
                                 String product = document.get("product").toString();
-                                //String id = document.getId();
+                                String adid = document.get("ADID").toString();
 
                                 YourPart part = new YourPart();
                                 part.setAddress(address);
@@ -76,6 +76,7 @@ public class YourAds extends AppCompatActivity {
                                 part.setDescription(description);
                                 part.setPricedescription(pricedescription);
                                 part.setPrice(price);
+                                part.setAdid(adid);
                                 YourAdParts.add(part);
                                 adAdapter.notifyDataSetChanged();
 

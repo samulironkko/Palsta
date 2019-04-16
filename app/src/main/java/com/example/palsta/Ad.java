@@ -10,6 +10,18 @@ public abstract class Ad {
     private String pricedescription = new String();
     private String product = new String();
 
+    public String getAdid() {
+        return adid;
+    }
+
+    public void setAdid(String adid) {
+        this.adid = adid;
+    }
+
+    private String adid = new String();
+
+
+
     public double getDistance() {
         return distance;
     }

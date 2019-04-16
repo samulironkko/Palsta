@@ -17,6 +17,9 @@ import android.widget.ImageView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.squareup.picasso.Picasso;
 
@@ -76,8 +79,34 @@ public class AdAdapter extends ArrayAdapter<Ad> {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     // TODO
-                                    //base.getAdID
+                                    String adID = base.getAdid();
                                     //tietokanta remove ad.id
+
+
+
+                                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                    db = FirebaseFirestore.getInstance();
+
+
+                                    Log.d("poisto", adID);
+                                    Log.d("poisto", base.getAddress());
+                                    Log.d("poisto", Float.toString(base.getPrice()));
+                                    Log.d("poisto", base.getAdid());
+                                    Log.d("poisto", "poisto");
+                                    db.collection("ad").document(adID)
+                                            .delete()
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    Log.d("poisto", "DocumentSnapshot successfully deleted!");
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Log.w("poisto", "Error deleting document", e);
+                                                }
+                                            });
                                 }
                             })
                             .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
