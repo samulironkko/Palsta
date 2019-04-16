@@ -74,6 +74,8 @@ import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
 import com.mapbox.mapboxsdk.style.expressions.Expression;
 import com.mapbox.mapboxsdk.style.layers.CircleLayer;
+import com.mapbox.mapboxsdk.style.layers.Layer;
+import com.mapbox.mapboxsdk.style.layers.Property;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonOptions;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
@@ -126,6 +128,7 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.textColor;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.textField;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.textIgnorePlacement;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.textSize;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.visibility;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -133,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
     private MapView mapView;
     private MapboxMap mapboxMap;
     JSONObject geoJSON;
+    JSONObject singleGeoJSON;
     Feature feature;
     FeatureCollection featureCollection;
     Point point;
@@ -143,6 +147,7 @@ public class MainActivity extends AppCompatActivity {
     LatLng previousLatLng;
     int disableListUpdate;
 
+    List<SymbolLayer> addedLayers;
     ArrayList<Ad> AdParts = new ArrayList<>();
     ArrayList<Ad> tempAdParts = new ArrayList<>();
     ListIterator<Ad> iterator;
@@ -186,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         LinearLayout llBottomSheet = (LinearLayout) findViewById(R.id.bottom_sheet);
-        ConstraintLayout conBottomSheet = (ConstraintLayout) findViewById(R.id.single_ad_bottom_sheet);
+        LinearLayout conBottomSheet = (LinearLayout) findViewById(R.id.single_ad_bottom_sheet);
 
         bottomSheetBehavior = BottomSheetBehavior.from(llBottomSheet);
         singleBottomSheetBehavior = BottomSheetBehavior.from(conBottomSheet);
@@ -216,7 +221,13 @@ public class MainActivity extends AppCompatActivity {
                 if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
                     mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(previousLatLng, 10));
                     disableListUpdate = 0;
+                    bottomSheetBehavior.setHideable(false);
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    mapboxMap.getStyle().getLayer("unclustered-points").setProperties(visibility(Property.VISIBLE));
+                    mapboxMap.getStyle().getLayer("cluster-0").setProperties(visibility(Property.VISIBLE));
+                    mapboxMap.getStyle().getLayer("count").setProperties(visibility(Property.VISIBLE));
+                    mapboxMap.getStyle().removeLayer("single-point");
+                    mapboxMap.getStyle().removeSource("single_ad");
                 }
             }
 
@@ -241,6 +252,21 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("gona", arg1.toString());
                 disableListUpdate = 1;
 
+                bottomSheetBehavior.setHideable(true);
+
+                point = new Point(tempAdParts.get(arg2).getLatLng().getLatitude(), tempAdParts.get(arg2).getLatLng().getLongitude());
+                feature = new Feature(point);
+               // feature.setIdentifier(id);
+                feature.setProperties(new JSONObject());
+
+                try {
+                    singleGeoJSON = feature.toJSON();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                addSingleGeoJsonSource(mapboxMap.getStyle());
+
                 //name of product
                 TextView name = findViewById(R.id.bottom_productNameText);
                 name.setText(tempAdParts.get(arg2).getProduct());
@@ -250,8 +276,8 @@ public class MainActivity extends AppCompatActivity {
                 price.setText(tempAdParts.get(arg2).getPrice() + "€/" + tempAdParts.get(arg2).getPricedescription());
 
                 //address
-                TextView address = findViewById(R.id.bottom_locationText);
-                address.setText(tempAdParts.get(arg2).getAddress());
+              //  TextView address = findViewById(R.id.bottom_locationText);
+              //  address.setText(tempAdParts.get(arg2).getAddress());
 
                 //description
                 TextView description = findViewById(R.id.bottom_descriptionText);
@@ -261,7 +287,7 @@ public class MainActivity extends AppCompatActivity {
                 TextView distance = findViewById(R.id.bottom_distanceText);
                 distance.setText(String.format("%.1f", tempAdParts.get(arg2).getDistance()/1000) + "km");
 
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
                 singleBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 previousLatLng = mapboxMap.getCameraPosition().target;
                 mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(tempAdParts.get(arg2).getLatLng().getLatitude() - 0.01, tempAdParts.get(arg2).getLatLng().getLongitude()), 12));
@@ -498,6 +524,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Add a new source from the GeoJSON data and set the 'cluster' option to true.
 
+
         loadedMapStyle.addSource(
                 new GeoJsonSource("ads",
                         geoJSON.toString(),
@@ -510,9 +537,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Each point range gets a different fill color.
         int[][] layers = new int[][] {
-                new int[] {150, ContextCompat.getColor(this, R.color.mapbox_plugins_green)},
-                new int[] {20, ContextCompat.getColor(this, R.color.mapbox_plugins_green)},
-                new int[] {0, ContextCompat.getColor(this, R.color.mapbox_blue)}
+                new int[] {0, ContextCompat.getColor(this, R.color.mapbox_plugins_bright_blue)}
         };
 
         //Creating a marker layer for single data points
@@ -533,9 +558,11 @@ public class MainActivity extends AppCompatActivity {
                         )
                 )
         );
+       // addedLayers.add(unclustered);
         loadedMapStyle.addLayer(unclustered);
 
-        for (int i = 0; i < layers.length; i++) {
+
+        for (int i = 0; i < 1; i++) {
             //Add clusters' circles
             CircleLayer circles = new CircleLayer("cluster-" + i, "ads");
             circles.setProperties(
@@ -556,6 +583,7 @@ public class MainActivity extends AppCompatActivity {
                     )
             );
             loadedMapStyle.addLayer(circles);
+           // addedLayers.add(circles);
         }
 
         //Add the count labels
@@ -570,6 +598,45 @@ public class MainActivity extends AppCompatActivity {
         loadedMapStyle.addLayer(count);
 
     }
+
+    private void addSingleGeoJsonSource(@NonNull Style loadedMapStyle) {
+
+        // Add a new source from the GeoJSON data and set the 'cluster' option to true.
+        loadedMapStyle.getLayer("unclustered-points").setProperties(visibility(Property.NONE));
+        loadedMapStyle.getLayer("cluster-0").setProperties(visibility(Property.NONE));
+        loadedMapStyle.getLayer("count").setProperties(visibility(Property.NONE));
+
+        loadedMapStyle.addSource(
+                new GeoJsonSource("single_ad",
+                        singleGeoJSON.toString(),
+                        new GeoJsonOptions()
+                                .withCluster(true)
+                                .withClusterMaxZoom(14)
+                                .withClusterRadius(50)
+                )
+        );
+
+        //Creating a marker layer for single data points
+        SymbolLayer unclustered = new SymbolLayer("single-point", "single_ad");
+
+        unclustered.setProperties(
+                iconImage("cross-icon-id"),
+                iconSize(
+                        division(
+                                get("mag"), literal(50.0f)
+                        )
+                ),
+                iconColor(
+                        interpolate(exponential(1), get("mag"),
+                                stop(2.0, rgb(0, 255, 0)),
+                                stop(4.5, rgb(0, 0, 255)),
+                                stop(7.0, rgb(255, 0, 0))
+                        )
+                )
+        );
+        loadedMapStyle.addLayer(unclustered);
+    }
+
 
     public boolean listIsAtTop() {
         if (listView.getChildCount() == 0) {

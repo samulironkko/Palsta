@@ -37,6 +37,7 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.cocoahero.android:geojson:1.0.1@jar'
     implementation 'id.zelory:compressor:2.1.0'
+    implementation 'com.ncorti:slidetoact:0.6.0'
     implementation 'com.squareup.picasso:picasso:2.71828'
 }
 
