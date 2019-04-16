@@ -26,6 +26,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -66,6 +67,8 @@ public class NewAdActivity extends AppCompatActivity {
     private static final int PLACE_SELECTION_REQUEST_CODE = 56789;
     private static final int RESULT_LOAD_IMAGE = 9999;
     private static final int MY_PERMISSION_ACCESS_GALLERY = 3928;
+
+    private final int PICK_IMAGE_REQUEST = 71;
 
 
 
@@ -192,7 +195,13 @@ public class NewAdActivity extends AppCompatActivity {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         Map<String, Object> data = new HashMap<>();
+
+        DocumentReference ref = db.collection("ad").document();
+        String myId = ref.getId();
+        //data.put("photourl", photo);
+
         data.put("UUID", UID);
+        data.put("ADID", myId);
         data.put("product",product);
         data.put("address",address);
         data.put("price",price);
@@ -203,14 +212,14 @@ public class NewAdActivity extends AppCompatActivity {
 
         data.put("geo", new GeoPoint(pointerLatitude,pointerLongitude));
 
-        db.collection("ad")
-                .add(data)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d("lol", "DocumentSnapshot written with ID: " + documentReference.getId());
-                    }
-                })
+        db.collection("ad").document(myId)
+                .set(data)
+                //.addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                //    @Override
+                //    public void onSuccess(DocumentReference documentReference) {
+                //        Log.d("lol", "DocumentSnapshot written with ID: " + documentReference.getId());
+                //    }
+                //})
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
@@ -273,9 +282,24 @@ public class NewAdActivity extends AppCompatActivity {
 */
             try {
                 Bitmap compressedImageBitmap = new Compressor(this).compressToBitmap(imageFile);
-                long compressedSize = compressedImageBitmap.getByteCount()/1024;
-                Log.d("jeps", valueOf(compressedSize));
+                //long compressedSize = compressedImageBitmap.getByteCount()/1024;
+                //Log.d("jeps", valueOf(compressedSize));
                 addImageButton.setImageBitmap(compressedImageBitmap);
+                //uploadTask = ref.putFile(file);
+                //upload = compressedImageBitmap.putFile("gs://palsta-b6497.appspot.com/");
+                /*
+                String filelocation = "gs://palsta-b6497.appspot.com/";
+                //uploadTask = ref.putFile(file)
+                imageFile.putFile(filelocation)
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        profilePicRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                Log.d("NEW_POST", uri.toString());
+                                //Post post = new Post(0, post_message, uri.toString(), type, System.currentTimeMillis(), FirebaseAuth.getInstance().getUid(), 0, user_name, profile_pic);
+                */
 
 
 
