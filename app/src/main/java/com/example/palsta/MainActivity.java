@@ -181,6 +181,7 @@ public class MainActivity extends AppCompatActivity {
             sharedPreferences.edit().putString("UUID", uniqueID).apply();
             sharedPreferences.edit().putBoolean("firstTime", false).apply();
         }else{
+            //sharedPreferences.edit().putString("UUID", "5bfbd2ef-6c61-4511-bdf5-5337e5ace31d").apply();
             Log.d("1234", sharedPreferences.getString("UUID", null));
         }
 

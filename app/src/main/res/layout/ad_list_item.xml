@@ -8,6 +8,9 @@
     android:background="@android:color/transparent"
     android:divider="@android:color/transparent"
     android:animateLayoutChanges="true"
+    android:clickable="false"
+    android:focusableInTouchMode="false"
+    android:focusable="false"
     >
 
     <View

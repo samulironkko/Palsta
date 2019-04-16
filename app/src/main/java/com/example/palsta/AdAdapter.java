@@ -1,6 +1,8 @@
 package com.example.palsta;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.nfc.Tag;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,9 +12,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -43,8 +49,8 @@ public class AdAdapter extends ArrayAdapter<Ad> {
 
     @NonNull
     @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent){
-        Ad base = getItem(position);
+    public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent){
+        final Ad base = getItem(position);
 
         if(convertView == null){
             int layoutId = 0;
@@ -56,6 +62,45 @@ public class AdAdapter extends ArrayAdapter<Ad> {
             convertView = LayoutInflater.from(getContext()).inflate(layoutId, parent, false);
         }
 
+        if(getItemViewType(position) == VIEW_TYPE_YOURAD){
+            ImageView remove = convertView.findViewById(R.id.removeIcon);
+            remove.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d("chad", Integer.toString(position));
+                    AlertDialog.Builder builder;
+                    builder = new AlertDialog.Builder(getContext());
+                    builder.setTitle("Remove ad")
+                            .setMessage("Do you really want to remove this ad?")
+                            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // TODO
+                                    //base.getAdID
+                                    //tietokanta remove ad.id
+                                }
+                            })
+                            .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //do nothing
+                                }
+                            })
+                            //.setIcon(icon here)
+                            .show();
+                }
+            });
+        }
+        //picture
+
+        /*
+        String imageUri = "https://i.imgur.com/tGbaZCY.jpg";
+        ImageView ivBasicImage = (ImageView) findViewById(R.id.productImage);
+        Picasso.with(context).load(imageUri).into(ivBasicImage);
+*/
+        ImageView image = convertView.findViewById(R.id.productImage);
+        Picasso.get().load("https://firebasestorage.googleapis.com/v0/b/palsta-b6497.appspot.com/o/puhtaasti_tomaatti.jpg?alt=media&token=8d141497-ae6a-4ce4-80e9-9a4b1d3e94c6")
+                .into(image);
 
         //name of product
         TextView name =convertView.findViewById(R.id.productNameText);
