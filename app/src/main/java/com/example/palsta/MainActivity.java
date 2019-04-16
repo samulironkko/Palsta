@@ -80,7 +80,9 @@ import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonOptions;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.mapboxsdk.utils.BitmapUtils;
+import com.ncorti.slidetoact.SlideToActView;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -288,6 +290,15 @@ public class MainActivity extends AppCompatActivity {
                 TextView distance = findViewById(R.id.bottom_distanceText);
                 distance.setText(String.format("%.1f", tempAdParts.get(arg2).getDistance()/1000) + "km");
 
+                SlideToActView slideToActView = (SlideToActView) findViewById(R.id.buy_slider);
+                slideToActView.setOnSlideCompleteListener(new SlideToActView.OnSlideCompleteListener() {
+                    @Override
+                    public void onSlideComplete(@NotNull SlideToActView slideToActView) {
+                        singleBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                        slideToActView.resetSlider();
+                    }
+                });
+
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
                 singleBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 previousLatLng = mapboxMap.getCameraPosition().target;
@@ -415,8 +426,10 @@ public class MainActivity extends AppCompatActivity {
         if (singleBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
             singleBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             return;
-        }else if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+        }else if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED && !listIsAtTop()) {
             listView.smoothScrollToPosition(0);
+            return;
+        }else if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED && listIsAtTop()) {
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             return;
         }
@@ -549,13 +562,6 @@ public class MainActivity extends AppCompatActivity {
                 iconSize(
                         division(
                                 get("mag"), literal(50.0f)
-                        )
-                ),
-                iconColor(
-                        interpolate(exponential(1), get("mag"),
-                                stop(2.0, rgb(0, 255, 0)),
-                                stop(4.5, rgb(0, 0, 255)),
-                                stop(7.0, rgb(255, 0, 0))
                         )
                 )
         );
