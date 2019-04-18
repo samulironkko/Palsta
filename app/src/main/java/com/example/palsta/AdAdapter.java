@@ -3,6 +3,7 @@ package com.example.palsta;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.nfc.Tag;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -55,6 +56,7 @@ public class AdAdapter extends ArrayAdapter<Ad> {
     public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent){
         final Ad base = getItem(position);
 
+
         if(convertView == null){
             int layoutId = 0;
             if (getItemViewType(position) == VIEW_TYPE_AD){
@@ -64,6 +66,7 @@ public class AdAdapter extends ArrayAdapter<Ad> {
             }
             convertView = LayoutInflater.from(getContext()).inflate(layoutId, parent, false);
         }
+
 
         if(getItemViewType(position) == VIEW_TYPE_YOURAD){
             ImageView remove = convertView.findViewById(R.id.removeIcon);
