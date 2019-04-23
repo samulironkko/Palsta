@@ -31,11 +31,17 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.mapbox.api.geocoding.v5.models.CarmenFeature;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
@@ -51,9 +57,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import id.zelory.compressor.Compressor;
 
+import static android.os.Build.ID;
+import static android.widget.Toast.LENGTH_SHORT;
 import static java.lang.String.valueOf;
 
 public class NewAdActivity extends AppCompatActivity {
@@ -68,7 +77,11 @@ public class NewAdActivity extends AppCompatActivity {
     private static final int RESULT_LOAD_IMAGE = 9999;
     private static final int MY_PERMISSION_ACCESS_GALLERY = 3928;
 
+    private StorageReference mStorageRef;
+
     private final int PICK_IMAGE_REQUEST = 71;
+
+    private StorageReference storageRef;
 
 
 
@@ -90,6 +103,9 @@ public class NewAdActivity extends AppCompatActivity {
         Bundle bundle = intent.getExtras();
         longitude = bundle.getDouble("EXTRA_LONGITUDE");
         latitude = bundle.getDouble("EXTRA_LATITUDE");
+
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        storageRef = storage.getReferenceFromUrl("gs://palsta-b6497.appspot.com/");
 
         Mapbox.getInstance(this, "pk.eyJ1Ijoic2FtdWxpcm9ua2tvIiwiYSI6ImNqdHF4Z2ViczBpZmI0ZGxsdDF1eHczZzgifQ.wBTnY_6-AdYQKk7dYqFDlQ");
 
@@ -164,6 +180,9 @@ public class NewAdActivity extends AppCompatActivity {
         //String pricedescription = new String();
         String description = new String();
 
+        mStorageRef = FirebaseStorage.getInstance().getReference();
+
+
         product = ((EditText)findViewById(R.id.product_name_edit_text)).getText().toString();
         address = ((TextView)findViewById(R.id.address_textview)).getText().toString();
 
@@ -174,7 +193,6 @@ public class NewAdActivity extends AppCompatActivity {
 
         Spinner mySpinner = (Spinner) findViewById(R.id.unit_spinner);
         String pricedescription = mySpinner.getSelectedItem().toString();
-
 
         Log.d("ass", product);
         Log.d("ass", address);
@@ -188,7 +206,6 @@ public class NewAdActivity extends AppCompatActivity {
         String UID = new String(sharedPreferences.getString("UUID", null));
         Log.d("lol", UID);
         Log.d("1234", sharedPreferences.getString("UUID", null));
-
 
         //Location lastLocation = locationEngine.getLastLocation();
 
@@ -228,7 +245,6 @@ public class NewAdActivity extends AppCompatActivity {
                 });
     }
 
-
     private void goToPickerActivity() {
         startActivityForResult(
                 new PlacePicker.IntentBuilder()
@@ -243,7 +259,6 @@ public class NewAdActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) { super.onActivityResult(requestCode, resultCode, data);
 
-
     if (requestCode == PLACE_SELECTION_REQUEST_CODE && resultCode == RESULT_OK){
 
             // Retrieve the information from the selected location's CarmenFeature
@@ -257,7 +272,6 @@ public class NewAdActivity extends AppCompatActivity {
 
         }else if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && data != null) {
 
-
             Uri SelectedImage = data.getData();
             String[] FilePathColumn = {MediaStore.Images.Media.DATA};
 
@@ -268,7 +282,7 @@ public class NewAdActivity extends AppCompatActivity {
             String picturePath = SelectedCursor.getString(columnIndex);
             SelectedCursor.close();
 
-            File imageFile = new File(picturePath);
+            final File imageFile = new File(picturePath);
             long originalSize = imageFile.length()/1024;
             Log.d("jeps", "original: " + valueOf(originalSize));
 /*
@@ -282,9 +296,32 @@ public class NewAdActivity extends AppCompatActivity {
 */
             try {
                 Bitmap compressedImageBitmap = new Compressor(this).compressToBitmap(imageFile);
-                //long compressedSize = compressedImageBitmap.getByteCount()/1024;
-                //Log.d("jeps", valueOf(compressedSize));
+                long compressedSize = compressedImageBitmap.getByteCount()/1024;
+                Log.d("jeps", valueOf(compressedSize));
                 addImageButton.setImageBitmap(compressedImageBitmap);
+
+                DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("shoutboard").child("posts").push();
+                String key = myRef.getKey();
+
+                Uri file = Uri.fromFile(imageFile);
+                StorageReference picture = storageRef.child("gs://palsta-b6497.appspot.com/");
+
+                picture.putFile(file)
+                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                // Get a URL to the uploaded content
+                                Uri photo = taskSnapshot.getUploadSessionUri();
+                                Log.d("kuvaa tulee", imageFile.toString());
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception exception) {
+                                // Handle unsuccessful uploads
+                                // ...
+                            }
+                        });
                 //uploadTask = ref.putFile(file);
                 //upload = compressedImageBitmap.putFile("gs://palsta-b6497.appspot.com/");
                 /*
@@ -300,23 +337,13 @@ public class NewAdActivity extends AppCompatActivity {
                                 Log.d("NEW_POST", uri.toString());
                                 //Post post = new Post(0, post_message, uri.toString(), type, System.currentTimeMillis(), FirebaseAuth.getInstance().getUid(), 0, user_name, profile_pic);
                 */
-
-
-
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
             //compressedImageBitmap=image to store
-
-
           //  addImageButton.setImageBitmap(BitmapFactory.decodeFile(picturePath));
-
         }
     }
-//<<<<<<< Updated upstream
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -325,11 +352,7 @@ public class NewAdActivity extends AppCompatActivity {
 
                 Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(galleryIntent, RESULT_LOAD_IMAGE);
-
             }
         }
     }
-
-//=======
-//>>>>>>> Stashed changes
 }
