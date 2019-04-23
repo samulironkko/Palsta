@@ -3,8 +3,10 @@ package com.example.palsta;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.nfc.Tag;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -70,6 +72,20 @@ public class AdAdapter extends ArrayAdapter<Ad> {
 
         if(getItemViewType(position) == VIEW_TYPE_YOURAD){
             ImageView remove = convertView.findViewById(R.id.removeIcon);
+            ImageView edit = convertView.findViewById(R.id.editIcon);
+            edit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getContext(), NewAdActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putDouble("EXTRA_LONGITUDE", base.getLatLng().getLongitude());
+                    bundle.putDouble("EXTRA_LATITUDE", base.getLatLng().getLatitude());
+                    bundle.putSerializable("EDITABLEAD", base);
+                    intent.putExtras(bundle);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    getContext().startActivity(intent);
+                }
+            });
             remove.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -122,6 +138,7 @@ public class AdAdapter extends ArrayAdapter<Ad> {
                             .show();
                 }
             });
+
         }
         //picture
 

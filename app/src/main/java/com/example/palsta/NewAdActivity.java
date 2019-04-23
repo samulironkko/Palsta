@@ -80,6 +80,8 @@ public class NewAdActivity extends AppCompatActivity {
     Spinner unitSpinner;
     RadioGroup sellGiveRadioGroup;
     Button publishButton;
+    Ad ad = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,8 +92,12 @@ public class NewAdActivity extends AppCompatActivity {
         Bundle bundle = intent.getExtras();
         longitude = bundle.getDouble("EXTRA_LONGITUDE");
         latitude = bundle.getDouble("EXTRA_LATITUDE");
+        Log.d("chad", Double.toString(latitude));
+        Log.d("chad", Double.toString(longitude));
+
 
         Mapbox.getInstance(this, "pk.eyJ1Ijoic2FtdWxpcm9ua2tvIiwiYSI6ImNqdHF4Z2ViczBpZmI0ZGxsdDF1eHczZzgifQ.wBTnY_6-AdYQKk7dYqFDlQ");
+        
 
         mapButton = findViewById(R.id.address_button);
         addressButton = findViewById(R.id.address_button);
@@ -106,6 +112,23 @@ public class NewAdActivity extends AppCompatActivity {
                 R.array.units_array, R.layout.spinner_item);
         spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         unitSpinner.setAdapter(spinnerAdapter);
+
+        if((Ad)bundle.getSerializable("EDITABLEAD") != null) {
+            ad = (Ad) bundle.getSerializable("EDITABLEAD");
+            Log.d("chad", "wattafak");
+            ((EditText)findViewById(R.id.product_name_edit_text)).setText(ad.getProduct());
+            ((TextView)findViewById(R.id.address_textview)).setText(ad.getAddress());
+            ((EditText)findViewById(R.id.price_edit_text)).setText(Float.toString(ad.getPrice()));
+            ((EditText)findViewById(R.id.desc_edit_text)).setText(ad.getDescription());
+            Spinner mySpinner = (Spinner) findViewById(R.id.unit_spinner);
+            Log.d("chadoget", ad.getPricedescription());
+            if(ad.getPricedescription().equals("Kg"))
+                mySpinner.setSelection(0);
+            if(ad.getPricedescription().equals("Kpl"))
+                mySpinner.setSelection(1);
+            if(ad.getPricedescription().equals("Litra"))
+                mySpinner.setSelection(2);
+        }
 
         sellGiveRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
