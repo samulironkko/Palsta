@@ -23,6 +23,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -36,6 +37,9 @@ public class YourAds extends AppCompatActivity {
 
     ArrayList<Ad> YourAdParts = new ArrayList<>();
     ListView listView = null;
+    GeoPoint geoPoint;
+    double geoLatitude;
+    double geoLongitude;
 
 
     @Override
@@ -68,6 +72,10 @@ public class YourAds extends AppCompatActivity {
                                 float price = document.getLong("price").floatValue();
                                 String pricedescription = document.get("pricedescription").toString();
                                 String product = document.get("product").toString();
+                                geoPoint = document.getGeoPoint("geo");
+                                geoLatitude = geoPoint.getLatitude();
+                                geoLongitude = geoPoint.getLongitude();
+                                LatLng geoLatLng = new LatLng(geoLatitude, geoLongitude);
                                 //String id = document.getId();
 
                                 YourPart part = new YourPart();
@@ -75,6 +83,7 @@ public class YourAds extends AppCompatActivity {
                                 part.setProduct(product);
                                 part.setDescription(description);
                                 part.setPricedescription(pricedescription);
+                                part.setLatLng(geoLatLng);
                                 part.setPrice(price);
                                 YourAdParts.add(part);
                                 adAdapter.notifyDataSetChanged();

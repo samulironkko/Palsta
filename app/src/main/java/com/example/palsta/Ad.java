@@ -2,7 +2,9 @@ package com.example.palsta;
 
 import com.mapbox.mapboxsdk.geometry.LatLng;
 
-public abstract class Ad {
+import java.io.Serializable;
+
+public abstract class Ad implements Serializable {
     //private String photo = new String();
     private String address = new String();
     private  String description = new String();
@@ -28,7 +30,7 @@ public abstract class Ad {
         this.latLng = latLng;
     }
 
-    private LatLng latLng;
+    private transient LatLng latLng;
 
 
     public String getAddress() {
