@@ -39,6 +39,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -80,7 +81,9 @@ import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonOptions;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.mapboxsdk.utils.BitmapUtils;
+import com.ncorti.slidetoact.SlideToActView;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -288,6 +291,15 @@ public class MainActivity extends AppCompatActivity {
                 TextView distance = findViewById(R.id.bottom_distanceText);
                 distance.setText(String.format("%.1f", tempAdParts.get(arg2).getDistance()/1000) + "km");
 
+                SlideToActView slideToActView = (SlideToActView) findViewById(R.id.buy_slider);
+                slideToActView.setOnSlideCompleteListener(new SlideToActView.OnSlideCompleteListener() {
+                    @Override
+                    public void onSlideComplete(@NotNull SlideToActView slideToActView) {
+                        singleBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                        slideToActView.resetSlider();
+                    }
+                });
+
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
                 singleBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 previousLatLng = mapboxMap.getCameraPosition().target;
@@ -415,8 +427,10 @@ public class MainActivity extends AppCompatActivity {
         if (singleBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
             singleBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             return;
-        }else if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+        }else if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED && !listIsAtTop()) {
             listView.smoothScrollToPosition(0);
+            return;
+        }else if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED && listIsAtTop()) {
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             return;
         }
@@ -549,13 +563,6 @@ public class MainActivity extends AppCompatActivity {
                 iconSize(
                         division(
                                 get("mag"), literal(50.0f)
-                        )
-                ),
-                iconColor(
-                        interpolate(exponential(1), get("mag"),
-                                stop(2.0, rgb(0, 255, 0)),
-                                stop(4.5, rgb(0, 0, 255)),
-                                stop(7.0, rgb(255, 0, 0))
                         )
                 )
         );
@@ -702,6 +709,7 @@ public class MainActivity extends AppCompatActivity {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 String address = document.get("address").toString();
                                 String description = document.get("description").toString();
+                                String adid = document.get("ADID").toString();
                                 float price = document.getLong("price").floatValue();
                                 String pricedescription = document.get("pricedescription").toString();
                                 String product = document.get("product").toString();
@@ -725,6 +733,7 @@ public class MainActivity extends AppCompatActivity {
                                 Log.d("asdf", description);
                                 Log.d("asdf", String.valueOf(geoLatitude));
                                 Log.d("asdf", String.valueOf(geoLongitude));
+                                Log.d("asdf", String.valueOf(adid));
 
 
                                 AdPart part = new AdPart();

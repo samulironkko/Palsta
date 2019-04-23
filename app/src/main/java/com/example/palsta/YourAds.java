@@ -77,6 +77,7 @@ public class YourAds extends AppCompatActivity {
                                 geoLongitude = geoPoint.getLongitude();
                                 LatLng geoLatLng = new LatLng(geoLatitude, geoLongitude);
                                 //String id = document.getId();
+                                String adid = document.get("ADID").toString();
 
                                 YourPart part = new YourPart();
                                 part.setAddress(address);
@@ -85,6 +86,7 @@ public class YourAds extends AppCompatActivity {
                                 part.setPricedescription(pricedescription);
                                 part.setLatLng(geoLatLng);
                                 part.setPrice(price);
+                                part.setAdid(adid);
                                 YourAdParts.add(part);
                                 adAdapter.notifyDataSetChanged();
 
