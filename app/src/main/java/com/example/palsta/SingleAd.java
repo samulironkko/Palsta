@@ -15,7 +15,7 @@ public class SingleAd extends AppCompatActivity {
         Intent intent = getIntent();
         AdPart ad = (AdPart) intent.getSerializableExtra("com.example.palsta.MESSAGE");
         ((TextView)findViewById(R.id.productNameSingle)).setText(ad.getProduct());
-        ((TextView)findViewById(R.id.priceTextSingle)).setText(Float.toString(ad.getPrice()) + "€/" + ad.getPricedescription());
+        ((TextView)findViewById(R.id.priceTextSingle)).setText(Double.toString(ad.getPrice()) + "€/" + ad.getPricedescription());
         ((TextView)findViewById(R.id.addressSingle)).setText(ad.getAddress());
         ((TextView)findViewById(R.id.descriptionSingle)).setText(ad.getDescription());
     }

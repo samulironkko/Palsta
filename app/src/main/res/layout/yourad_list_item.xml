@@ -105,25 +105,28 @@
             android:focusableInTouchMode="false"
             />
 
-        <ImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/removeIcon"
+            app:layout_constraintTop_toBottomOf="@id/descriptionText"
             android:background="#fff"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="5dp"
+            android:minWidth="120dp"
+            android:text="Muokkaa"
             android:id="@+id/editIcon"
             />
 
-        <ImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            app:layout_constraintRight_toLeftOf="@+id/editIcon"
-            app:layout_constraintTop_toTopOf="parent"
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/editIcon"
+            app:layout_constraintTop_toBottomOf="@id/descriptionText"
+            android:text="Poista"
+            android:minWidth="120dp"
             android:background="#fff"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="5dp"
+
             android:id="@+id/removeIcon"
             />
 

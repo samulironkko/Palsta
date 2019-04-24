@@ -71,8 +71,8 @@ public class AdAdapter extends ArrayAdapter<Ad> {
 
 
         if(getItemViewType(position) == VIEW_TYPE_YOURAD){
-            ImageView remove = convertView.findViewById(R.id.removeIcon);
-            ImageView edit = convertView.findViewById(R.id.editIcon);
+            Button remove = convertView.findViewById(R.id.removeIcon);
+            Button edit = convertView.findViewById(R.id.editIcon);
             edit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -102,14 +102,13 @@ public class AdAdapter extends ArrayAdapter<Ad> {
                                     //tietokanta remove ad.id
 
 
-
                                     FirebaseFirestore db = FirebaseFirestore.getInstance();
                                     db = FirebaseFirestore.getInstance();
 
 
                                     Log.d("poisto", adID);
                                     Log.d("poisto", base.getAddress());
-                                    Log.d("poisto", Float.toString(base.getPrice()));
+                                    Log.d("poisto", Double.toString(base.getPrice()));
                                     Log.d("poisto", base.getAdid());
                                     Log.d("poisto", "poisto");
                                     db.collection("ad").document(adID)

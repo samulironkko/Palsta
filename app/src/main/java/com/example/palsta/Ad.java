@@ -8,7 +8,7 @@ public abstract class Ad implements Serializable {
     //private String photo = new String();
     private String address = new String();
     private  String description = new String();
-    private float price;
+    private double price;
     private String pricedescription = new String();
     private String product = new String();
 
@@ -61,11 +61,11 @@ public abstract class Ad implements Serializable {
         this.description = description;
     }
 
-    public float getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(float price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
