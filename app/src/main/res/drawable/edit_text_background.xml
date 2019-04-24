@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <stroke
-        android:width="2dp"
-        android:color="@color/common_google_signin_btn_text_dark_focused"/>
+    <item android:bottom="-1dp"
+        android:left="-4dp"
+        android:right="-4dp"
+        android:top="-4dp">
+        <shape android:shape="rectangle" >
+            <stroke
+                android:width="2dp"
+                android:color="@android:color/darker_gray" />
+        </shape>
+    </item>
 
-</shape>
+</layer-list>
