@@ -137,6 +137,8 @@ public class NewAdActivity extends AppCompatActivity {
             ((EditText)findViewById(R.id.price_edit_text)).setText(Float.toString(ad.getPrice()));
             ((EditText)findViewById(R.id.desc_edit_text)).setText(ad.getDescription());
             Spinner mySpinner = (Spinner) findViewById(R.id.unit_spinner);
+            pointerLatitude = latitude;
+            pointerLongitude = longitude;
             Log.d("chadoget", ad.getPricedescription());
             if(ad.getPricedescription().equals("Kg"))
                 mySpinner.setSelection(0);
@@ -240,32 +242,83 @@ public class NewAdActivity extends AppCompatActivity {
         String myId = ref.getId();
         //data.put("photourl", photo);
 
-        data.put("UUID", UID);
-        data.put("ADID", myId);
-        data.put("product",product);
-        data.put("address",address);
-        data.put("price",price);
-        data.put("pricedescription",pricedescription);
-        data.put("description",description);
-        //location: new firebase.firestore.GeoPoint(pointerLatitude, pointerLongitude);
-        //new GeoPoint(latitude = pointerLatitude, longitude = pointerLongitude);
 
-        data.put("geo", new GeoPoint(pointerLatitude,pointerLongitude));
+        if (ad == null) {
+            data.put("UUID", UID);
+            data.put("ADID", myId);
+            data.put("product", product);
+            data.put("address", address);
+            data.put("price", price);
+            data.put("pricedescription", pricedescription);
+            data.put("description", description);
+            data.put("geo", new GeoPoint(pointerLatitude, pointerLongitude));
+            //location: new firebase.firestore.GeoPoint(pointerLatitude, pointerLongitude);
+            //new GeoPoint(latitude = pointerLatitude, longitude = pointerLongitude);
 
-        db.collection("ad").document(myId)
-                .set(data)
-                //.addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                //    @Override
-                //    public void onSuccess(DocumentReference documentReference) {
-                //        Log.d("lol", "DocumentSnapshot written with ID: " + documentReference.getId());
-                //    }
-                //})
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("lol", "Error adding document", e);
-                    }
-                });
+
+            db.collection("ad").document(myId)
+                    .set(data)
+                    //.addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    //    @Override
+                    //    public void onSuccess(DocumentReference documentReference) {
+                    //        Log.d("lol", "DocumentSnapshot written with ID: " + documentReference.getId());
+                    //    }
+                    //})
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w("lol", "Error adding document", e);
+                        }
+                    });
+        } else {
+
+            data.put("UUID", UID);
+            data.put("ADID", ad.getAdid());
+            data.put("product", product);
+            data.put("address", address);
+            data.put("price", price);
+            data.put("pricedescription", pricedescription);
+            data.put("description", description);
+            data.put("geo", new GeoPoint(pointerLatitude, pointerLongitude));
+
+
+
+            DocumentReference washingtonRef = db.collection("ad").document(ad.getAdid());
+
+// Set the "isCapital" field of the city 'DC'
+            washingtonRef
+                    .update(data)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d("update", "DocumentSnapshot successfully updated!");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w("update", "Error updating document", e);
+                        }
+                    });
+
+
+            /*
+            data.put("UUID", "mun on ID XDDDD");
+            data.put("ADID", myId);
+            data.put("product", "myydään TOMAAATTIA!");
+            data.put("address", address);
+            data.put("price", price);
+            data.put("pricedescription", pricedescription);
+            data.put("description", description);
+            data.put("geo", new GeoPoint(pointerLatitude, pointerLongitude));
+            Log.d("päivitys", "woop woop");
+
+            db
+                    .collection("ad")
+                    .document(myId)
+                    .update(data);
+                    */
+        }
     }
 
     private void goToPickerActivity() {
