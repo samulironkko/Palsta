@@ -35,6 +35,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -45,8 +46,10 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 
 import com.cocoahero.android.geojson.Feature;
@@ -83,6 +86,7 @@ import com.mapbox.mapboxsdk.style.sources.GeoJsonOptions;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.mapboxsdk.utils.BitmapUtils;
 import com.ncorti.slidetoact.SlideToActView;
+import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -99,6 +103,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.UUID;
 
+import jp.wasabeef.picasso.transformations.MaskTransformation;
 import timber.log.Timber;
 
 import static com.example.palsta.R.id.gone;
@@ -108,6 +113,7 @@ import timber.log.Timber;
 
 import static com.example.palsta.R.id.productNameText;
 import static com.example.palsta.R.id.single_ad_bottom_sheet;
+import static com.example.palsta.R.id.toolbar;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.all;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.division;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.exponential;
@@ -291,6 +297,10 @@ public class MainActivity extends AppCompatActivity {
                 //distance
                 TextView distance = findViewById(R.id.bottom_distanceText);
                 distance.setText(String.format("%.1f", tempAdParts.get(arg2).getDistance()/1000) + "km");
+
+                ImageView image = findViewById(R.id.bottom_productImage);
+                Picasso.get().load("https://firebasestorage.googleapis.com/v0/b/palsta-b6497.appspot.com/o/puhtaasti_tomaatti.jpg?alt=media&token=8d141497-ae6a-4ce4-80e9-9a4b1d3e94c6")
+                        .transform(new MaskTransformation(MainActivity.this, R.drawable.list_shape)).into(image);
 
                 SlideToActView slideToActView = (SlideToActView) findViewById(R.id.buy_slider);
                 slideToActView.setOnSlideCompleteListener(new SlideToActView.OnSlideCompleteListener() {

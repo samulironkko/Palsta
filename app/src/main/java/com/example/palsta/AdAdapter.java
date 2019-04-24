@@ -9,6 +9,7 @@ import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.util.LogPrinter;
 import android.view.LayoutInflater;
@@ -27,6 +28,9 @@ import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+
+import jp.wasabeef.picasso.transformations.MaskTransformation;
+import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
 public class AdAdapter extends ArrayAdapter<Ad> {
 
@@ -69,6 +73,8 @@ public class AdAdapter extends ArrayAdapter<Ad> {
             convertView = LayoutInflater.from(getContext()).inflate(layoutId, parent, false);
         }
 
+        CardView cardView = (CardView)convertView;
+        cardView.setCardElevation(10 * position);
 
         if(getItemViewType(position) == VIEW_TYPE_YOURAD){
             ImageView remove = convertView.findViewById(R.id.removeIcon);
@@ -149,7 +155,7 @@ public class AdAdapter extends ArrayAdapter<Ad> {
 */
         ImageView image = convertView.findViewById(R.id.productImage);
         Picasso.get().load("https://firebasestorage.googleapis.com/v0/b/palsta-b6497.appspot.com/o/puhtaasti_tomaatti.jpg?alt=media&token=8d141497-ae6a-4ce4-80e9-9a4b1d3e94c6")
-                .into(image);
+                .transform(new MaskTransformation(getContext(), R.drawable.list_shape)).into(image);
 
         //name of product
         TextView name =convertView.findViewById(R.id.productNameText);
