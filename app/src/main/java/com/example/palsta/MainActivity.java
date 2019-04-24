@@ -33,6 +33,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -194,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        LinearLayout llBottomSheet = (LinearLayout) findViewById(R.id.bottom_sheet);
+        CardView llBottomSheet = (CardView) findViewById(R.id.bottom_sheet);
         LinearLayout conBottomSheet = (LinearLayout) findViewById(R.id.single_ad_bottom_sheet);
 
         bottomSheetBehavior = BottomSheetBehavior.from(llBottomSheet);
@@ -508,8 +509,8 @@ public class MainActivity extends AppCompatActivity {
                         }
                         style.addImage(
                                 "cross-icon-id",
-                                BitmapUtils.getBitmapFromDrawable(getResources().getDrawable(R.drawable.baseline_person_pin_circle_black_24dp)),
-                                true
+                                BitmapUtils.getBitmapFromDrawable(getResources().getDrawable(R.drawable.icon_palsta)),
+                                false
                         );
                         getLocation();
                         mapboxMap.addOnMoveListener(new MapboxMap.OnMoveListener() {
@@ -546,13 +547,13 @@ public class MainActivity extends AppCompatActivity {
                         new GeoJsonOptions()
                                 .withCluster(true)
                                 .withClusterMaxZoom(14)
-                                .withClusterRadius(50)
+                                .withClusterRadius(40)
                 )
         );
 
         // Each point range gets a different fill color.
         int[][] layers = new int[][] {
-                new int[] {0, ContextCompat.getColor(this, R.color.mapbox_plugins_bright_blue)}
+                new int[] {0, ContextCompat.getColor(this, R.color.colorPrimary)}
         };
 
         //Creating a marker layer for single data points
@@ -562,7 +563,7 @@ public class MainActivity extends AppCompatActivity {
                 iconImage("cross-icon-id"),
                 iconSize(
                         division(
-                                get("mag"), literal(50.0f)
+                                get("mag"), literal(1.0f)
                         )
                 )
         );
@@ -575,7 +576,7 @@ public class MainActivity extends AppCompatActivity {
             CircleLayer circles = new CircleLayer("cluster-" + i, "ads");
             circles.setProperties(
                     circleColor(layers[i][1]),
-                    circleRadius(18f)
+                    circleRadius(23f)
             );
 
             Expression pointCount = toNumber(get("point_count"));
@@ -631,16 +632,10 @@ public class MainActivity extends AppCompatActivity {
                 iconImage("cross-icon-id"),
                 iconSize(
                         division(
-                                get("mag"), literal(50.0f)
-                        )
-                ),
-                iconColor(
-                        interpolate(exponential(1), get("mag"),
-                                stop(2.0, rgb(0, 255, 0)),
-                                stop(4.5, rgb(0, 0, 255)),
-                                stop(7.0, rgb(255, 0, 0))
+                                get("mag"), literal(1.0f)
                         )
                 )
+
         );
         loadedMapStyle.addLayer(unclustered);
     }
