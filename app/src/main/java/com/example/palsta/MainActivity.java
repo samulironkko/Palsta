@@ -207,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
         bottomSheetBehavior = BottomSheetBehavior.from(llBottomSheet);
         singleBottomSheetBehavior = BottomSheetBehavior.from(conBottomSheet);
 
-        // set callback for changes
+        // When listBottomSheets state changes
         bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
@@ -226,6 +226,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //When singleBottomSheets state changes
         singleBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View view, int newState) {
@@ -255,6 +256,8 @@ public class MainActivity extends AppCompatActivity {
 
         listView = findViewById(R.id.adList);
         listView.setEnabled(false);
+
+        //When user clicks litItem
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -298,10 +301,12 @@ public class MainActivity extends AppCompatActivity {
                 TextView distance = findViewById(R.id.bottom_distanceText);
                 distance.setText(String.format("%.1f", tempAdParts.get(arg2).getDistance()/1000) + "km");
 
+                //Image
                 ImageView image = findViewById(R.id.bottom_productImage);
                 Picasso.get().load("https://firebasestorage.googleapis.com/v0/b/palsta-b6497.appspot.com/o/puhtaasti_tomaatti.jpg?alt=media&token=8d141497-ae6a-4ce4-80e9-9a4b1d3e94c6")
                         .transform(new MaskTransformation(MainActivity.this, R.drawable.list_shape)).into(image);
 
+                //SlideToPay
                 SlideToActView slideToActView = (SlideToActView) findViewById(R.id.buy_slider);
                 slideToActView.setOnSlideCompleteListener(new SlideToActView.OnSlideCompleteListener() {
                     @Override
@@ -315,45 +320,9 @@ public class MainActivity extends AppCompatActivity {
                 singleBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 previousLatLng = mapboxMap.getCameraPosition().target;
                 mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(tempAdParts.get(arg2).getLatLng().getLatitude() - 0.01, tempAdParts.get(arg2).getLatLng().getLongitude()), 12));
-               // if (arg1.findViewById(R.id.descriptionText).getVisibility() == View.GONE) {
-                 //   arg1.findViewById(R.id.descriptionText).setVisibility(View.VISIBLE);
-                                /*ImageView imageView = (ImageView)arg1.findViewById(R.id.productImage);
-                                  ViewGroup.LayoutParams params = (ViewGroup.LayoutParams)imageView.getLayoutParams();
-                                params.width = -1;
-                                ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams)imageView.getLayoutParams();
-                                marginLayoutParams.leftMargin = 0;
-                                marginLayoutParams.topMargin = 0;
-                                marginLayoutParams.bottomMargin = 0;
-                                ConstraintLayout.LayoutParams constraintLayout = (ConstraintLayout.LayoutParams) findViewById(R.id.con2).getLayoutParams();
-                                constraintLayout.topToBottom = R.id.productImage;
-                                arg1.findViewById(R.id.con2).requestLayout();*/
-               // } else {
-                //    arg1.findViewById(R.id.descriptionText).setVisibility(View.GONE);
-               // }
-                //Log.d("asdf","Items " +  AdParts.get(arg2).getStr() );
-                //Intent intent = new Intent(getBaseContext(), SingleAd.class);
-                //intent.putExtra(EXTRA_MESSAGE, AdParts.get(arg2));
-                //startActivity(intent);
             }
 
         });
-       // updateFromDb();
-
-
-/*
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("message");
-
-        myRef.setValue("Hello, World!");
-
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-
-        db = FirebaseApp.getInstance();
-
-        DatabaseReference = FirebaseDatabase.getInstance().getReference().child("singleMessage").push();
-*/
-
-
     }
 
     @Override
@@ -659,6 +628,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //Update distance to adItems when location is found and sort list according to distance
     public void updateGPSCoordinates(Location location) {
         longitude = location.getLongitude();
         latitude = location.getLatitude();
@@ -680,6 +650,7 @@ public class MainActivity extends AppCompatActivity {
         updateTempList();
     }
 
+    //Update list according to where user is looking on map
     public void updateTempList() {
         if (disableListUpdate == 0) {
             tempAdParts.clear();
@@ -696,6 +667,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //Update from database
     public void updateFromDb() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -763,49 +735,6 @@ public class MainActivity extends AppCompatActivity {
                             //QuerySnapshot doc = task.getResult();
                             buildMap();
                             //StringBuilder fields = new StringBuilder("");
-
-                    /*
-                    add new table
-
-                    Map<String, Object> data1 = new HashMap<>();
-                    data1.put("product", "Kurkku");
-                    data1.put("address", "Jousimiehentie 2");
-                    data1.put("price", 2);
-                    data1.put("pricedescription", "kg");
-                    data1.put("description", "kasvihuoneessa kasvatettuja kurkkuja");
-                    ad.document("Ilmoitus5").set(data1);
-
-                    */
-
-                            //TextView productName = findViewById(R.id.productNameText);
-                            //TextView addressField = findViewById(R.id.locationText);
-
-
-/*
-                    productName.append(product);
-                    addressField.append(address);
-/*
-                    Log.d("asdf", product);
-                    Log.d("asdf", address);
-                    Log.d("asdf", String.valueOf(price));
-                    Log.d("asdf", pricedescription);
-                    Log.d("asdf", description);
-                    Log.d("asdf", location);
-*/
-                            //fields.append(product + "\n");
-                            //fields.append(price).append("€/").append(pricedescription + "\n");
-                            //fields.append(address);
-
-                            //sijainti
-                            //TextView price = findViewById(R.id.priceText);
-
-                            //productName.setText(fields.toString());
-                            //price.setText(fields.toString());
-
-
-                            //  AdAdapter adapter = new AdAdapter(MainActivity.this, AdParts);
-                            //  listView.setAdapter(adapter);
-
                         }
 
                     }
