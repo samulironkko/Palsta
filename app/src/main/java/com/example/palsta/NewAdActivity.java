@@ -54,6 +54,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -134,7 +136,7 @@ public class NewAdActivity extends AppCompatActivity {
             Log.d("chad", "wattafak");
             ((EditText)findViewById(R.id.product_name_edit_text)).setText(ad.getProduct());
             ((TextView)findViewById(R.id.address_textview)).setText(ad.getAddress());
-            ((EditText)findViewById(R.id.price_edit_text)).setText(Float.toString(ad.getPrice()));
+            ((EditText)findViewById(R.id.price_edit_text)).setText(Double.toString(ad.getPrice()));
             ((EditText)findViewById(R.id.desc_edit_text)).setText(ad.getDescription());
             Spinner mySpinner = (Spinner) findViewById(R.id.unit_spinner);
             pointerLatitude = latitude;
@@ -211,8 +213,12 @@ public class NewAdActivity extends AppCompatActivity {
         product = ((EditText)findViewById(R.id.product_name_edit_text)).getText().toString();
         address = ((TextView)findViewById(R.id.address_textview)).getText().toString();
 
+        DecimalFormat df = new DecimalFormat("#.##");
+        df.setRoundingMode(RoundingMode.CEILING);
         EditText edt = (EditText) findViewById(R.id.price_edit_text);
-        float price = Float.valueOf(edt.getText().toString());
+        double price = Double.valueOf(edt.getText().toString());
+
+
 
         description = ((EditText)findViewById(R.id.desc_edit_text)).getText().toString();
 

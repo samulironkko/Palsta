@@ -51,7 +51,6 @@ public class YourAds extends AppCompatActivity {
         final AdAdapter adAdapter = new AdAdapter(this, YourAdParts);
         listView.setAdapter(adAdapter);
 
-
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db = FirebaseFirestore.getInstance();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -69,7 +68,7 @@ public class YourAds extends AppCompatActivity {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 String address = document.get("address").toString();
                                 String description = document.get("description").toString();
-                                float price = document.getLong("price").floatValue();
+                                double price = document.getLong("price").doubleValue();
                                 String pricedescription = document.get("pricedescription").toString();
                                 String product = document.get("product").toString();
                                 geoPoint = document.getGeoPoint("geo");
@@ -105,11 +104,6 @@ public class YourAds extends AppCompatActivity {
                 });
     }
 }
-
-
-
-
-
 
 /*
                                 final CollectionReference myads = db.collection("ad");

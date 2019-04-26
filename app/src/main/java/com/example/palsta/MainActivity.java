@@ -687,7 +687,7 @@ public class MainActivity extends AppCompatActivity {
                                 String address = document.get("address").toString();
                                 String description = document.get("description").toString();
                                 String adid = document.get("ADID").toString();
-                                float price = document.getLong("price").floatValue();
+                                double price = document.getLong("price").doubleValue();
                                 String pricedescription = document.get("pricedescription").toString();
                                 String product = document.get("product").toString();
                                 String id = document.getId();
